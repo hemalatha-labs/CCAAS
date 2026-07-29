@@ -1,0 +1,16 @@
+package com.CCS.Service.Enumuration;
+
+public enum ModuleType {
+	TENANT,
+	USER,
+	SUBSCRIPTION,
+	CLOUD_ACCOUNT,
+	CLOUD_RESOURCE,
+	COMPLIANCE,
+	SCAN,
+	REPORT,
+	REMEDIATION,
+	AI_CHAT,
+	NOTIFICATION
+
+}
