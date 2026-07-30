@@ -58,7 +58,7 @@ public class UserController {
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse<User>> upDateUser(@PathVariable Long id , @RequestBody User user){
 		
-		User updateUser = userService.UpdateUser(user);
+		User updateUser = userService.updateUser(user);
 		
 		return ResponseEntity.ok( new ApiResponse<>("User updated successfully", updateUser , true)
 				);	

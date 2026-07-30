@@ -1,73 +1,79 @@
-
 package com.CCS.Service.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.CCS.Service.Repo.UserRepo;
 import com.CCS.Service.globalException.ResourceNotFoundException;
-import com.CCS.Service.model.*;
+import com.CCS.Service.model.User;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-
 public class UserService {
-	
-    
-	private final UserRepo userRepo;
-	
-	public List<User> getAllUsers(){
-		 return userRepo.findAll();
-	}
-	
-	public Optional<User> getUser(Long id) {
-		return userRepo.findById(id)
-				.orElseThrow(() ->
-				     new ResourceNotFoundException("User not found with id: "+id));
-	}
-	public User updateUser(Long id, User updatedUser) {
 
-	    User existing = getUser(id);
+    private  UserRepo userRepo;
 
-	    if (updatedUser.getName() != null) {
-	        existing.setName(updatedUser.getName());
-	    }
+    // Get All Users
+    public List<User> getAllUsers() {
+        return userRepo.findAll();
+    }
 
-	    if (updatedUser.getEmail() != null) {
+    // Get User By Id
+    public User getUser(Long id) {
+        return userRepo.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found with id: " + id));
+    }
 
-	        if (userRepo.existsByEmail(updatedUser.getEmail())
-	                && !existing.getEmail().equals(updatedUser.getEmail())) {
+    // Create User
+    public User newUser(User user) {
 
-	            throw new RuntimeException("Email already exists");
-	        }
+        if (userRepo.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
 
-	        existing.setEmail(updatedUser.getEmail());
-	    }
+        return userRepo.save(user);
+    }
 
-	    if (updatedUser.getRole() != null) {
-	        existing.setRole(updatedUser.getRole());
-	    }
+    // Update User
+    public User updateUser(Long id, User updatedUser) {
 
-	    if (updatedUser.getStatus() != null) {
-	        existing.setStatus(updatedUser.getStatus());
-	    }
+        User existingUser = getUser(id);
 
-	    return userRepo.save(existing);
-	}
-	
+        if (updatedUser.getName() != null) {
+            existingUser.setName(updatedUser.getName());
+        }
 
-	public User newUser(User user) {
-		
-		return  userRepo.save(user);
-	}
-	
-	public void deleteUSer(Long id) {
-		userRepo.deleteById(id);
-	}
-	
-		
+        if (updatedUser.getEmail() != null) {
+
+            if (userRepo.existsByEmail(updatedUser.getEmail())
+                    && !existingUser.getEmail().equals(updatedUser.getEmail())) {
+
+                throw new RuntimeException("Email already exists");
+            }
+
+            existingUser.setEmail(updatedUser.getEmail());
+        }
+
+        if (updatedUser.getRole() != null) {
+            existingUser.setRole(updatedUser.getRole());
+        }
+
+        if (updatedUser.getStatus() != null) {
+            existingUser.setStatus(updatedUser.getStatus());
+        }
+
+        return userRepo.save(existingUser);
+    }
+
+    // Delete User
+    public void deleteUser(Long id) {
+
+        User user = getUser(id);
+
+        userRepo.delete(user);
+    }
 }
