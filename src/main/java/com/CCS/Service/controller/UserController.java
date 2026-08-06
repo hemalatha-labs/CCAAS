@@ -22,7 +22,7 @@ import com.CCS.Service.model.User;
 import jakarta.annotation.PostConstruct;
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("/api/user")
 public class UserController {
 	
 	@Autowired
@@ -38,14 +38,13 @@ public class UserController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse<Optional<User>>> getUserById(@PathVariable Long id){
-		Optional<User> user = userService.getUser(id);
-		
+		Optional<User> user = Optional.of(userService.getUser(id));
 		return ResponseEntity.ok( new ApiResponse<>("User fetched by id", user, true)
 				);
 	}
 	
 	
-	@PostMapping("/{id}")
+	@PostMapping("/new")
 	public ResponseEntity<ApiResponse<User>> createUser(@RequestBody User user){
 			
 		User Createuser = userService.newUser(user);
@@ -56,9 +55,9 @@ public class UserController {
 }
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<ApiResponse<User>> upDateUser(@PathVariable Long id , @RequestBody User user){
-		
-		User updateUser = userService.updateUser(user);
+	public ResponseEntity<ApiResponse<User>> upDateUser(@PathVariable Long id , 
+														@RequestBody User user){
+		User updateUser = userService.updateUser(id,user);
 		
 		return ResponseEntity.ok( new ApiResponse<>("User updated successfully", updateUser , true)
 				);	
@@ -66,7 +65,7 @@ public class UserController {
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ApiResponse<User>> deleteUser(@PathVariable Long id){
-		userService.deleteUSer(id);
+		userService.deleteUser(id);
 		
 		return ResponseEntity.ok(new ApiResponse<>("User deleted", null, true)
 				);

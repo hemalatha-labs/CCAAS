@@ -15,7 +15,6 @@ import lombok.Data;
 @Entity
 @Table(name="Subscription")
 @Data
-
 public class Subscription {
 	@Id
 	private Long subscriptionId;

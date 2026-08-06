@@ -2,6 +2,7 @@ package com.CCS.Service.Service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.CCS.Service.Repo.UserRepo;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 
+	@Autowired
     private  UserRepo userRepo;
 
     // Get All Users
@@ -76,4 +78,6 @@ public class UserService {
 
         userRepo.delete(user);
     }
+
+	
 }

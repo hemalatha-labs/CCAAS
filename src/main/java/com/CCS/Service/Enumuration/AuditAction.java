@@ -11,5 +11,4 @@ public enum AuditAction {
 	IMPORT,
 	VIEW,
 	APPROVE
-
 }
