@@ -18,19 +18,19 @@ public class UserService {
 	@Autowired
     private  UserRepo userRepo;
 
-    // Get All Users
+
     public List<User> getAllUsers() {
         return userRepo.findAll();
     }
 
-    // Get User By Id
+   
     public User getUser(Long id) {
         return userRepo.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found with id: " + id));
     }
 
-    // Create User
+   
     public User newUser(User user) {
 
         if (userRepo.existsByEmail(user.getEmail())) {
@@ -40,7 +40,7 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    // Update User
+   
     public User updateUser(Long id, User updatedUser) {
 
         User existingUser = getUser(id);
@@ -71,7 +71,7 @@ public class UserService {
         return userRepo.save(existingUser);
     }
 
-    // Delete User
+    
     public void deleteUser(Long id) {
 
         User user = getUser(id);

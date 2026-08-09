@@ -20,8 +20,8 @@ public class Integration {
 	private Long integrationId;
 	
 	@Enumerated(EnumType.STRING)
-	
 	private CloudProvider provider;
+	@Enumerated(EnumType.STRING)
 	private ConnectionStatus connectionStatus;
 	private LocalDateTime lastSync;
 	

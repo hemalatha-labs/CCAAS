@@ -25,7 +25,9 @@ public class Tenant {
 	
 	@Enumerated(EnumType.STRING)
 	private IndustryType industry;
+	@Enumerated(EnumType.STRING)
 	private SubscriptionPlan subscriptionPlan;
+	@Enumerated(EnumType.STRING)
 	private TenantStatus status;
 	private LocalDateTime createdAT;
 	

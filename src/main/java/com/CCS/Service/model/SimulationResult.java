@@ -22,6 +22,7 @@ public class SimulationResult {
 	@Enumerated(EnumType.STRING)
 	private ComplianceStatus complianceStatus;
 	private int predictedViolations;
+	@Enumerated(EnumType.STRING)
 	private RiskLevel riskLevel;
 	
 	

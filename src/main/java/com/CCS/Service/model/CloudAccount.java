@@ -22,6 +22,7 @@ public class CloudAccount {
 	private String accountName;
 	private String accountNumber;
 	private String region;
+	@Enumerated(EnumType.STRING)
 	private ResourceStatus status;
 	
 	

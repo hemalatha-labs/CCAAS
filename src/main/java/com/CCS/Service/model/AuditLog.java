@@ -21,6 +21,7 @@ public class AuditLog {
 	private Long auditId;
 	@Enumerated(EnumType.STRING)
 	private AuditAction action;
+	@Enumerated(EnumType.STRING)
 	private ModuleType module;
 	private LocalDateTime Timestamp;
 	

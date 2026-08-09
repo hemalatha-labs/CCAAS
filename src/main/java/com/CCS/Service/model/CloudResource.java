@@ -22,6 +22,7 @@ public class CloudResource {
 	@Enumerated(EnumType.STRING)
 	private ResourceType resourceType;
 	private String region;
+	@Enumerated(EnumType.STRING)
 	private ResourceStatus status;
 	
 	
