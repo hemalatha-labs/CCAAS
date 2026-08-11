@@ -1,6 +1,7 @@
 package com.CCS.Service.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,8 +15,8 @@ import lombok.Data;
 @Data
 public class AIChatSession {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long chatId;
+	@GeneratedValue(strategy = GenerationType.UUID)
+    private UUID chatId;
 	private String question;
 	private String answer;
 	private LocalDateTime Timestamp;

@@ -1,11 +1,14 @@
 package com.CCS.Service.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.CCS.Service.Enumuration.ResourceType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -15,7 +18,8 @@ import lombok.Data;
 @Data
 public class Simulation {
 	@Id
-	private Long simulationId;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID simulationId;
 	
 	
 	@Enumerated
