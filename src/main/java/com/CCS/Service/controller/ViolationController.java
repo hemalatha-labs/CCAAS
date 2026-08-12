@@ -2,6 +2,7 @@ package com.CCS.Service.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class ViolationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<Violation>>> getViolationById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Optional<Violation>>> getViolationById(@PathVariable UUID id) {
 
         Optional<Violation> violation = violationService.getViolation(id);
 
@@ -65,7 +66,7 @@ public class ViolationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteViolation(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteViolation(@PathVariable UUID id) {
 
         violationService.deleteViolation(id);
 

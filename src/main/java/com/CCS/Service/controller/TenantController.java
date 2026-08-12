@@ -2,6 +2,7 @@ package com.CCS.Service.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class TenantController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<Tenant>>> getTenantById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Optional<Tenant>>> getTenantById(@PathVariable UUID id) {
 
         Optional<Tenant> tenant = tenantService.gettenant(id);
 
@@ -64,7 +65,7 @@ public class TenantController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteTenant(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteTenant(@PathVariable UUID id) {
 
         tenantService.deleteTenant(id);
 

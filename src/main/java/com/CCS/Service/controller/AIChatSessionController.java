@@ -2,6 +2,7 @@ package com.CCS.Service.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class AIChatSessionController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Optional<AIChatSession>>> getAIChatSessionById(
-            @PathVariable Long id) {
+            @PathVariable UUID id) {
 
         Optional<AIChatSession> aiChatSession =
                 aiChatSessionService.getAIChatSession(id);
@@ -75,7 +76,7 @@ public class AIChatSessionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteAIChatSession(
-            @PathVariable Long id) {
+            @PathVariable UUID id) {
 
         aiChatSessionService.deleteAIChatSession(id);
 

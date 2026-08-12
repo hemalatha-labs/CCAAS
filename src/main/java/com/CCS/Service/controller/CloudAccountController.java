@@ -2,6 +2,7 @@ package com.CCS.Service.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class CloudAccountController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<CloudAccount>>> getCloudAccountById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Optional<CloudAccount>>> getCloudAccountById(@PathVariable UUID id) {
 
         Optional<CloudAccount> cloudAccount = cloudAccountService.getCloudAccount(id);
 
@@ -64,7 +65,7 @@ public class CloudAccountController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteCloudAccount(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCloudAccount(@PathVariable UUID id) {
 
         cloudAccountService.deleteCloudAccount(id);
 

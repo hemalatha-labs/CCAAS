@@ -2,6 +2,7 @@ package com.CCS.Service.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class AuditLogController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Optional<AuditLog>>> getAuditLogById(
-            @PathVariable Long id) {
+            @PathVariable UUID id) {
 
         Optional<AuditLog> auditLog = auditLogService.getAuditLog(id);
 
@@ -59,7 +60,7 @@ public class AuditLogController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<AuditLog>> updateAuditLog(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody AuditLog auditLog) {
 
         AuditLog updatedAuditLog =
@@ -72,7 +73,7 @@ public class AuditLogController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteAuditLog(
-            @PathVariable Long id) {
+            @PathVariable UUID id) {
 
         auditLogService.deleteAuditLog(id);
 

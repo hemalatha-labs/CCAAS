@@ -2,6 +2,7 @@ package com.CCS.Service.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class IntegrationService {
 		 return integrationRepo.findAll();
 	}
 	
-	public Optional<Integration> getIntegration(Long id) {
+	public Optional<Integration> getIntegration(UUID id) {
 		return integrationRepo.findById(id);
 	}
 
@@ -31,7 +32,7 @@ public class IntegrationService {
 		return  integrationRepo.save(integration);
 	}
 	
-	public void deleteIntegration(Long id) {
+	public void deleteIntegration(UUID id) {
 		integrationRepo.deleteById(id);
 	}
 	

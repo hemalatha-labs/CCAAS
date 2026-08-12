@@ -2,6 +2,7 @@ package com.CCS.Service.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class IntegrationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<Integration>>> getIntegrationById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Optional<Integration>>> getIntegrationById(@PathVariable UUID id) {
 
         Optional<Integration> integration = integrationService.getIntegration(id);
 
@@ -64,7 +65,7 @@ public class IntegrationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteIntegration(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteIntegration(@PathVariable UUID id) {
 
         integrationService.deleteIntegration(id);
 

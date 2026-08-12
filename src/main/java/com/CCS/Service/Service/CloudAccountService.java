@@ -2,6 +2,7 @@ package com.CCS.Service.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class CloudAccountService {
 		 return cloudAccountRepo.findAll();
 	}
 	
-	public Optional<CloudAccount> getCloudAccount(Long id) {
+	public Optional<CloudAccount> getCloudAccount(UUID id) {
 		return cloudAccountRepo.findById(id);
 	}
 
@@ -31,7 +32,7 @@ public class CloudAccountService {
 		return  cloudAccountRepo.save(cloudAccount);
 	}
 	
-	public void deleteCloudAccount(Long id) {
+	public void deleteCloudAccount(UUID id) {
 		cloudAccountRepo.deleteById(id);
 	}
 	

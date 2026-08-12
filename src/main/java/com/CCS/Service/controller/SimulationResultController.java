@@ -2,6 +2,7 @@ package com.CCS.Service.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class SimulationResultController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Optional<SimulationResult>>> getSimulationResultById(
-            @PathVariable Long id) {
+            @PathVariable UUID id) {
 
         Optional<SimulationResult> simulationResult =
                 simulationResultService.getSimulationResult(id);
@@ -75,7 +76,7 @@ public class SimulationResultController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteSimulationResult(
-            @PathVariable Long id) {
+            @PathVariable UUID id) {
 
         simulationResultService.deleteSimulationResult(id);
 

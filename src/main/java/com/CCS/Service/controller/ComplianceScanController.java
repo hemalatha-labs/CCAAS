@@ -2,6 +2,7 @@ package com.CCS.Service.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class ComplianceScanController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<ComplianceScan>>> getComplianceScanById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Optional<ComplianceScan>>> getComplianceScanById(@PathVariable UUID id) {
 
         Optional<ComplianceScan> complianceScan = complianceScanService.getComplianceScan(id);
 
@@ -67,7 +68,7 @@ public class ComplianceScanController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteComplianceScan(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteComplianceScan(@PathVariable UUID id) {
 
         complianceScanService.deleteComplianceScan(id);
 

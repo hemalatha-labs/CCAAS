@@ -2,6 +2,7 @@ package com.CCS.Service.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class CloudResourceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<CloudResource>>> getCloudResourceById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Optional<CloudResource>>> getCloudResourceById(@PathVariable UUID id) {
 
         Optional<CloudResource> cloudResource = cloudResourceService.getCloudResource(id);
 
@@ -64,7 +65,7 @@ public class CloudResourceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteCloudResource(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCloudResource(@PathVariable UUID id) {
 
         cloudResourceService.deleteCloudResource(id);
 

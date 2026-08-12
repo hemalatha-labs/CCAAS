@@ -2,6 +2,7 @@ package com.CCS.Service.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class SimulationService {
 		 return simulationRepo.findAll();
 	}
 	
-	public Optional<Simulation> getSimulation(Long id) {
+	public Optional<Simulation> getSimulation(UUID id) {
 		return simulationRepo.findById(id);
 	}
 
@@ -34,7 +35,7 @@ public class SimulationService {
 		return simulationRepo.save(simulation);
 	}
 	
-	public void deleteSimulation(Long id) {
+	public void deleteSimulation(UUID id) {
 		simulationRepo.deleteById(id);
 	}
 }

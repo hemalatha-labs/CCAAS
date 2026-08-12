@@ -2,6 +2,7 @@ package com.CCS.Service.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class ScanReportService {
 		 return scanReportRepo.findAll();
 	}
 	
-	public Optional<ScanReport> getScanReport(Long id) {
+	public Optional<ScanReport> getScanReport(UUID id) {
 		return scanReportRepo.findById(id);
 	}
 
@@ -30,7 +31,7 @@ public class ScanReportService {
 		return  scanReportRepo.save(scanReport);
 	}
 	
-	public void deleteScanReport(Long id) {
+	public void deleteScanReport(UUID id) {
 		scanReportRepo.deleteById(id);
 	}
 	

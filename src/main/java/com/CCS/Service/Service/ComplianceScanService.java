@@ -2,6 +2,7 @@ package com.CCS.Service.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class ComplianceScanService {
 		 return complianceScanRepo.findAll();
 	}
 	
-	public Optional<ComplianceScan> getComplianceScan(Long id) {
+	public Optional<ComplianceScan> getComplianceScan(UUID id) {
 		return complianceScanRepo.findById(id);
 	}
 
@@ -30,7 +31,7 @@ public class ComplianceScanService {
 		return  complianceScanRepo.save(complianceScan);
 	}
 	
-	public void deleteComplianceScan(Long id) {
+	public void deleteComplianceScan(UUID id) {
 		complianceScanRepo.deleteById(id);
 	}
 	

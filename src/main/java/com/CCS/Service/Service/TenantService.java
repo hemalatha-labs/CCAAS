@@ -2,7 +2,7 @@ package com.CCS.Service.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class TenantService {
 	public List<Tenant> getAllTenants(){
 		return tenantRepo.findAll();	
 	}
-	public Optional<Tenant> gettenant(Long id){
+	public Optional<Tenant> gettenant(UUID id){
 		return tenantRepo.findById(id);
 		
 	}
@@ -35,7 +35,7 @@ public class TenantService {
 		return tenantRepo.save(tenant);
 	}
 	
-	public void deleteTenant(Long id) {
+	public void deleteTenant(UUID id) {
 		tenantRepo.deleteById(id);
 	}
 	

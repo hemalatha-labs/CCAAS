@@ -17,8 +17,6 @@ import lombok.Data;
 @Entity
 @Table(name="AuditLog")
 @Data
-
-
 public class AuditLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)

@@ -2,6 +2,7 @@ package com.CCS.Service.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class AuditLogService {
 		 return auditLogRepo.findAll();
 	}
 	
-	public Optional<AuditLog> getAuditLog(Long id) {
+	public Optional<AuditLog> getAuditLog(UUID id) {
 		return auditLogRepo.findById(id);
 	}
 
@@ -30,7 +31,7 @@ public class AuditLogService {
 		return  auditLogRepo.save(auditLog);
 	}
 	
-	public void deleteAuditLog(Long id) {
+	public void deleteAuditLog(UUID id) {
 		auditLogRepo.deleteById(id);
 	}
 	

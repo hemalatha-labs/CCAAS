@@ -2,6 +2,7 @@ package com.CCS.Service.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class ViolationService {
 		 return violationRepo.findAll();
 	}
 	
-	public Optional<Violation> getViolation(Long id) {
+	public Optional<Violation> getViolation(UUID id) {
 		return violationRepo.findById(id);
 	}
 
@@ -34,7 +35,7 @@ public class ViolationService {
 		return violationRepo.save(violation);
 	}
 	
-	public void deleteViolation(Long id) {
+	public void deleteViolation(UUID id) {
 		violationRepo.deleteById(id);
 	}
 }

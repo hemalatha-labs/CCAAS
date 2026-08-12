@@ -2,6 +2,7 @@ package com.CCS.Service.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class CloudResourceService{
 		 return cloudResourceRepo.findAll();
 	}
 	
-	public Optional<CloudResource> getCloudResource(Long id) {
+	public Optional<CloudResource> getCloudResource(UUID id) {
 		return cloudResourceRepo.findById(id);
 	}
 
@@ -31,7 +32,7 @@ public class CloudResourceService{
 		return  cloudResourceRepo.save(cloudResource);
 	}
 	
-	public void deleteCloudResource(Long id) {
+	public void deleteCloudResource(UUID id) {
 		cloudResourceRepo.deleteById(id);
 	}
 	
