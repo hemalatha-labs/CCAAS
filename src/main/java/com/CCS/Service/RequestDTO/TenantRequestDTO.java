@@ -1,19 +1,25 @@
 package com.CCS.Service.RequestDTO;
+
 import com.CCS.Service.Enumuration.IndustryType;
 import com.CCS.Service.Enumuration.SubscriptionPlan;
 import com.CCS.Service.Enumuration.TenantStatus;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
 @Data
-
 public class TenantRequestDTO {
-	
-		    private String tenantName;
 
-		    private IndustryType industry;
+    @NotBlank(message = "Tenant name is required")
+    private String tenantName;
 
-		    private SubscriptionPlan subscriptionPlan;
+    @NotNull(message = "Industry is required")
+    private IndustryType industry;
 
-		    private TenantStatus status;
+    @NotNull(message = "Subscription plan is required")
+    private SubscriptionPlan subscriptionPlan;
 
+    @NotNull(message = "Status is required")
+    private TenantStatus status;
 }

@@ -54,7 +54,7 @@ public class TenantController {
                         true));
     }
 
-    @PostMapping
+    @PostMapping("/new")
     public ResponseEntity<ApiResponse<TenantResponseDTO>> createTenant(
             @Valid @RequestBody com.CCS.Service.RequestDTO.TenantRequestDTO dto) {
 

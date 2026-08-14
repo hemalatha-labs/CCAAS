@@ -1,5 +1,7 @@
 package com.CCS.Service.Mapper;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Component;
 
 import com.CCS.Service.ResponseDTO.TenantResponseDTO;
@@ -18,6 +20,7 @@ public class TenantMapper {
 	        tenant.setSubscriptionPlan(
 	                dto.getSubscriptionPlan());
 	        tenant.setStatus(dto.getStatus());
+	        tenant.setCreatedAT(LocalDateTime.now());
 
 	        return tenant;
 	    }

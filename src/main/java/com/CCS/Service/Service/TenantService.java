@@ -46,6 +46,10 @@ public class TenantService {
 
         // Save Entity
         Tenant savedTenant = tenantRepo.save(tenant);
+        
+        //generate time
+        
+        
 
         // Entity → Response DTO
         return tenantMapper.toResponseDTO(savedTenant);
@@ -65,6 +69,8 @@ public class TenantService {
         existingTenant.setSubscriptionPlan(
                 dto.getSubscriptionPlan());
         existingTenant.setStatus(dto.getStatus());
+        
+        
 
         Tenant updatedTenant =
                 tenantRepo.save(existingTenant);

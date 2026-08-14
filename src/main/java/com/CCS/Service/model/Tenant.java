@@ -34,8 +34,5 @@ public class Tenant {
 	@Enumerated(EnumType.STRING)
 	private TenantStatus status;
 	private LocalDateTime createdAT;
-	
-	
-	
 
 }
