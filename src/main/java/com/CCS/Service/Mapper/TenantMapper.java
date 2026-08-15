@@ -14,14 +14,12 @@ public class TenantMapper {
 	    public Tenant toEntityTenant(TenantRequestDTO dto) {
 
 	        Tenant tenant = new Tenant();
-
 	        tenant.setTenantName(dto.getTenantName());
 	        tenant.setIndustry(dto.getIndustry());
 	        tenant.setSubscriptionPlan(
 	                dto.getSubscriptionPlan());
 	        tenant.setStatus(dto.getStatus());
 	        tenant.setCreatedAT(LocalDateTime.now());
-
 	        return tenant;
 	    }
 
@@ -40,5 +38,4 @@ public class TenantMapper {
 	        return dto;
 	    
 	}
-
 }

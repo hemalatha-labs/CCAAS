@@ -32,7 +32,7 @@ public class globalExceptionHandler {
     }
 
 
-    // ✅ ADD THIS METHOD
+    //ADD THIS METHOD
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidationException(
             MethodArgumentNotValidException ex) {
