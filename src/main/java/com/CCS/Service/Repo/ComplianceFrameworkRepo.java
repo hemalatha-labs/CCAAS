@@ -1,11 +1,13 @@
 package com.CCS.Service.Repo;
 
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import com.CCS.Service.model.ComplianceFramework;
-@Repository
 
-public interface ComplianceFrameworkRepo extends JpaRepository<ComplianceFramework,Long>{
+public interface ComplianceFrameworkRepo
+        extends JpaRepository<ComplianceFramework, UUID> {
 
+    boolean existsByFrameworkName(String frameworkName);
 }

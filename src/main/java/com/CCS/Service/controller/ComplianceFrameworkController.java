@@ -1,9 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,62 +16,125 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.ComplianceFrameworkRequestDTO;
+import com.CCS.Service.ResponseDTO.ComplianceFrameworkResponseDTO;
 import com.CCS.Service.Service.ComplianceFrameworkService;
-import com.CCS.Service.model.ComplianceFramework;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/complianceframework")
+@RequestMapping("/api/compliance-frameworks")
+@RequiredArgsConstructor
 public class ComplianceFrameworkController {
 
     @Autowired
     private ComplianceFrameworkService complianceFrameworkService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<ComplianceFramework>>> getAllComplianceFrameworks() {
 
-        List<ComplianceFramework> frameworks = complianceFrameworkService.getAllComplianceFrameworks();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<ComplianceFrameworkResponseDTO>>>
+    getAllComplianceFrameworks() {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Frameworks fetched successfully", frameworks, true));
+        List<ComplianceFrameworkResponseDTO> frameworks =
+                complianceFrameworkService
+                        .getAllComplianceFrameworks();
+
+        ApiResponse<List<ComplianceFrameworkResponseDTO>> response =
+                new ApiResponse<>(
+                        "Compliance frameworks fetched successfully",
+                        frameworks,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<ComplianceFramework>>> getComplianceFrameworkById(@PathVariable Long id) {
+    public ResponseEntity<
+            ApiResponse<ComplianceFrameworkResponseDTO>>
+    getComplianceFramework(
+            @PathVariable UUID id) {
 
-        Optional<ComplianceFramework> framework = complianceFrameworkService.getComplianceFramework(id);
+        ComplianceFrameworkResponseDTO framework =
+                complianceFrameworkService
+                        .getComplianceFramework(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Framework fetched successfully", framework, true));
+        ApiResponse<ComplianceFrameworkResponseDTO> response =
+                new ApiResponse<>(
+                        "Compliance framework fetched successfully",
+                        framework,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<ComplianceFramework>> createComplianceFramework(
-            @RequestBody ComplianceFramework framework) {
 
-        ComplianceFramework createdFramework = complianceFrameworkService.newComplianceFramework(framework);
+    // CREATE
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<ComplianceFrameworkResponseDTO>>
+    newComplianceFramework(
+            @Valid @RequestBody
+            ComplianceFrameworkRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Framework created successfully", createdFramework, true));
+        ComplianceFrameworkResponseDTO framework =
+                complianceFrameworkService
+                        .newComplianceFramework(dto);
+
+        ApiResponse<ComplianceFrameworkResponseDTO> response =
+                new ApiResponse<>(
+                        "Compliance framework created successfully",
+                        framework,
+                        true);
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ComplianceFramework>> updateComplianceFramework(
-            @PathVariable Long id,
-            @RequestBody ComplianceFramework framework) {
 
-        ComplianceFramework updatedFramework =
-                complianceFrameworkService.newComplianceFramework(framework);
+    // UPDATE
+    @PutMapping("/update/{id}")
+    public ResponseEntity<
+            ApiResponse<ComplianceFrameworkResponseDTO>>
+    updateComplianceFramework(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            ComplianceFrameworkRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Framework updated successfully", updatedFramework, true));
+        ComplianceFrameworkResponseDTO framework =
+                complianceFrameworkService
+                        .updateComplianceFramework(id, dto);
+
+        ApiResponse<ComplianceFrameworkResponseDTO> response =
+                new ApiResponse<>(
+                        "Compliance framework updated successfully",
+                        framework,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteComplianceFramework(@PathVariable Long id) {
 
-        complianceFrameworkService.deleteComplianceFramework(id);
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteComplianceFramework(
+            @PathVariable UUID id) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Framework deleted successfully", null, true));
+        complianceFrameworkService
+                .deleteComplianceFramework(id);
+
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        "Compliance framework deleted successfully",
+                        null,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 }
