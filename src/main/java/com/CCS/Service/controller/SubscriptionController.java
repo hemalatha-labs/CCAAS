@@ -1,9 +1,9 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,60 +15,118 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.SubscriptionRequestDTO;
+import com.CCS.Service.ResponseDTO.SubscriptionResponseDTO;
 import com.CCS.Service.Service.SubscriptionService;
-import com.CCS.Service.model.Subscription;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/subscription")
+@RequestMapping("/api/subscriptions")
+@RequiredArgsConstructor
 public class SubscriptionController {
 
     @Autowired
     private SubscriptionService subscriptionService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<Subscription>>> getAllSubscriptions() {
 
-        List<Subscription> subscriptions = subscriptionService.getAllSubscriptions();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<SubscriptionResponseDTO>>>
+    getAllSubscriptions() {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Subscriptions fetched successfully", subscriptions, true));
+        List<SubscriptionResponseDTO> subscriptions =
+                subscriptionService.getAllSubscriptions();
+
+        ApiResponse<List<SubscriptionResponseDTO>> response =
+                new ApiResponse<>(
+                        "Subscriptions fetched successfully",
+                        subscriptions,
+                        true
+                );
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<Subscription>>> getSubscriptionById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<SubscriptionResponseDTO>>
+    getSubscription(@PathVariable Long id) {
 
-        Optional<Subscription> subscription = subscriptionService.getSubscription(id);
+        SubscriptionResponseDTO subscription =
+                subscriptionService.getSubscription(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Subscription fetched successfully", subscription, true));
+        ApiResponse<SubscriptionResponseDTO> response =
+                new ApiResponse<>(
+                        "Subscription fetched successfully",
+                        subscription,
+                        true
+                );
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // CREATE
     @PostMapping
-    public ResponseEntity<ApiResponse<Subscription>> createSubscription(@RequestBody Subscription subscription) {
+    public ResponseEntity<ApiResponse<SubscriptionResponseDTO>>
+    newSubscription(
+            @Valid @RequestBody SubscriptionRequestDTO dto) {
 
-        Subscription createdSubscription = subscriptionService.newSubscription(subscription);
+        SubscriptionResponseDTO subscription =
+                subscriptionService.newSubscription(dto);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Subscription created successfully", createdSubscription, true));
+        ApiResponse<SubscriptionResponseDTO> response =
+                new ApiResponse<>(
+                        "Subscription created successfully",
+                        subscription,
+                        true
+                );
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED
+        );
     }
 
+
+    // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Subscription>> updateSubscription(
+    public ResponseEntity<ApiResponse<SubscriptionResponseDTO>>
+    updateSubscription(
             @PathVariable Long id,
-            @RequestBody Subscription subscription) {
+            @Valid @RequestBody SubscriptionRequestDTO dto) {
 
-        Subscription updatedSubscription = subscriptionService.UpdateSubscription(subscription);
+        SubscriptionResponseDTO subscription =
+                subscriptionService.updateSubscription(id, dto);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Subscription updated successfully", updatedSubscription, true));
+        ApiResponse<SubscriptionResponseDTO> response =
+                new ApiResponse<>(
+                        "Subscription updated successfully",
+                        subscription,
+                        true
+                );
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteSubscription(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Object>>
+    deleteSubscription(@PathVariable Long id) {
 
-        subscriptionService.deletesubscription(id);
+        subscriptionService.deleteSubscription(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Subscription deleted successfully", null, true));
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        "Subscription deleted successfully",
+                        null,
+                        true
+                );
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -4,59 +4,94 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import com.CCS.Service.ApiResponse.*;
 
-import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.ResponseDTO.*;
 
 @RestControllerAdvice
 public class globalExceptionHandler {
 
-   
+    // Resource Not Found - 404
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleResourceNotFound(ResourceNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleResourceNotFound(
+            ResourceNotFoundException ex) {
 
-        ApiResponse<Object> response =
-                new ApiResponse<>(ex.getMessage(), null, false);
+        ApiResponse<Object> response = new ApiResponse<>(
+                ex.getMessage(),
+                null,
+                false
+        );
 
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(response);
     }
 
 
+    // Bad Request - 400
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ApiResponse<Object>> handleBadRequest(BadRequestException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleBadRequest(
+            BadRequestException ex) {
 
-        ApiResponse<Object> response =
-                new ApiResponse<>(ex.getMessage(), null, false);
+        ApiResponse<Object> response = new ApiResponse<>(
+                ex.getMessage(),
+                null,
+                false
+        );
 
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(response);
     }
 
 
-    //ADD THIS METHOD
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Object>> handleValidationException(
-            MethodArgumentNotValidException ex) {
+    // Duplicate Resource - 409
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDuplicateResource(
+            DuplicateResourceException ex) {
 
-        String message = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(error -> error.getDefaultMessage())
-                .findFirst()
-                .orElse("Validation failed");
+        ApiResponse<Object> response = new ApiResponse<>(
+                ex.getMessage(),
+                null,
+                false
+        );
 
-        ApiResponse<Object> response =
-                new ApiResponse<>(message, null, false);
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
     }
 
 
+    // Cloud Integration Error - 503
+    @ExceptionHandler(CloudIntegrationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleCloudIntegration(
+            CloudIntegrationException ex) {
+
+        ApiResponse<Object> response = new ApiResponse<>(
+                ex.getMessage(),
+                null,
+                false
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(response);
+    }
+
+
+    // Other Unexpected Errors - 500
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Object>> handleGlobalException(Exception ex) {
+    public ResponseEntity<ApiResponse<Object>> handleGeneralException(
+            Exception ex) {
 
-        ApiResponse<Object> response =
-                new ApiResponse<>("Something went wrong: " + ex.getMessage(), null, false);
+        ApiResponse<Object> response = new ApiResponse<>(
+                "Something went wrong: " + ex.getMessage(),
+                null,
+                false
+        );
 
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(response);
     }
 }

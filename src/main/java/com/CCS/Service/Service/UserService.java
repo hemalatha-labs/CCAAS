@@ -29,8 +29,7 @@ public class UserService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found with id: " + id));
     }
-
-   
+ 
     public User newUser(User user) {
 
         if (userRepo.existsByEmail(user.getEmail())) {

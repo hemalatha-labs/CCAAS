@@ -41,17 +41,11 @@ public class TenantService {
     public TenantResponseDTO newTenant(
             TenantRequestDTO dto) {
 
-        // DTO → Entity
         Tenant tenant = tenantMapper.toEntityTenant(dto);
 
-        // Save Entity
         Tenant savedTenant = tenantRepo.save(tenant);
         
-        //generate time
-        
-        
 
-        // Entity → Response DTO
         return tenantMapper.toResponseDTO(savedTenant);
     }
 
