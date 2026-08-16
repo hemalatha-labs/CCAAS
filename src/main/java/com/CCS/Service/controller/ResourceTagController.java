@@ -1,9 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,60 +16,142 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.ResourceTagRequestDTO;
+import com.CCS.Service.ResponseDTO.ResourceTagResponseDTO;
 import com.CCS.Service.Service.ResourceTagService;
-import com.CCS.Service.model.ResourceTag;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/resourcetag")
+@RequestMapping("/api/resource-tags")
+@RequiredArgsConstructor
 public class ResourceTagController {
 
     @Autowired
     private ResourceTagService resourceTagService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<ResourceTag>>> getAllResourceTags() {
 
-        List<ResourceTag> resourceTags = resourceTagService.getAllResourceTags();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<ResourceTagResponseDTO>>>
+    getAllResourceTags() {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Resource Tags fetched successfully", resourceTags, true));
+        List<ResourceTagResponseDTO> tags =
+                resourceTagService.getAllResourceTags();
+
+        ApiResponse<List<ResourceTagResponseDTO>> response =
+                new ApiResponse<>(
+                        "Resource tags fetched successfully",
+                        tags,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<ResourceTag>>> getResourceTagById(@PathVariable Long id) {
+    public ResponseEntity<
+            ApiResponse<ResourceTagResponseDTO>>
+    getResourceTag(@PathVariable UUID id) {
 
-        Optional<ResourceTag> resourceTag = resourceTagService.getResourceTag(id);
+        ResourceTagResponseDTO tag =
+                resourceTagService.getResourceTag(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Resource Tag fetched successfully", resourceTag, true));
+        ApiResponse<ResourceTagResponseDTO> response =
+                new ApiResponse<>(
+                        "Resource tag fetched successfully",
+                        tag,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<ResourceTag>> createResourceTag(@RequestBody ResourceTag resourceTag) {
 
-        ResourceTag createdResourceTag = resourceTagService.newResourceTag(resourceTag);
+    // GET BY CLOUD RESOURCE
+    @GetMapping("/resource/{cloudResourceId}")
+    public ResponseEntity<
+            ApiResponse<List<ResourceTagResponseDTO>>>
+    getTagsByCloudResource(
+            @PathVariable UUID cloudResourceId) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Resource Tag created successfully", createdResourceTag, true));
+        List<ResourceTagResponseDTO> tags =
+                resourceTagService
+                        .getTagsByCloudResource(
+                                cloudResourceId);
+
+        ApiResponse<List<ResourceTagResponseDTO>> response =
+                new ApiResponse<>(
+                        "Resource tags fetched successfully",
+                        tags,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ResourceTag>> updateResourceTag(
-            @PathVariable Long id,
-            @RequestBody ResourceTag resourceTag) {
 
-        ResourceTag updatedResourceTag = resourceTagService.UpdateResourceTag(resourceTag);
+    // CREATE
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<ResourceTagResponseDTO>>
+    newResourceTag(
+            @Valid @RequestBody
+            ResourceTagRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Resource Tag updated successfully", updatedResourceTag, true));
+        ResourceTagResponseDTO tag =
+                resourceTagService
+                        .newResourceTag(dto);
+
+        ApiResponse<ResourceTagResponseDTO> response =
+                new ApiResponse<>(
+                        "Resource tag created successfully",
+                        tag,
+                        true);
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteResourceTag(@PathVariable Long id) {
+
+    // UPDATE
+    @PutMapping("/update/{id}")
+    public ResponseEntity<
+            ApiResponse<ResourceTagResponseDTO>>
+    updateResourceTag(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            ResourceTagRequestDTO dto) {
+
+        ResourceTagResponseDTO tag =
+                resourceTagService.updateResourceTag(
+                        id, dto);
+
+        ApiResponse<ResourceTagResponseDTO> response =
+                new ApiResponse<>(
+                        "Resource tag updated successfully",
+                        tag,
+                        true);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteResourceTag(@PathVariable UUID id) {
 
         resourceTagService.deleteResourceTag(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Resource Tag deleted successfully", null, true));
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        "Resource tag deleted successfully",
+                        null,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 }

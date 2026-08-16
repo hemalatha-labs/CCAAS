@@ -1,11 +1,15 @@
 package com.CCS.Service.Repo;
 
+import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import com.CCS.Service.model.ResourceTag;
-@Repository
-public interface ResourceTagRepo extends JpaRepository<ResourceTag,Long> {
 
+public interface ResourceTagRepo
+        extends JpaRepository<ResourceTag, UUID> {
+
+    List<ResourceTag> findByCloudResourceCloudResourceId(
+            UUID cloudResourceId);
 }
