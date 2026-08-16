@@ -30,5 +30,7 @@ public class Subscription {
 
     private Integer maxResources;
 
+    private Integer maxScans;
+
     private LocalDate expiryDate;
 }

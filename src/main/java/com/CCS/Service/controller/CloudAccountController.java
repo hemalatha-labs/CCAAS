@@ -1,10 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,60 +16,117 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.CloudAccountRequestDTO;
+import com.CCS.Service.ResponseDTO.CloudAccountResponseDTO;
 import com.CCS.Service.Service.CloudAccountService;
-import com.CCS.Service.model.CloudAccount;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/cloudaccount")
+@RequestMapping("/api/cloud-accounts")
+@RequiredArgsConstructor
 public class CloudAccountController {
 
     @Autowired
     private CloudAccountService cloudAccountService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<CloudAccount>>> getAllCloudAccounts() {
 
-        List<CloudAccount> cloudAccounts = cloudAccountService.getAllCloudAccount();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<CloudAccountResponseDTO>>>
+    getAllCloudAccounts() {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Cloud Accounts fetched successfully", cloudAccounts, true));
+        List<CloudAccountResponseDTO> cloudAccounts =
+                cloudAccountService.getAllCloudAccounts();
+
+        ApiResponse<List<CloudAccountResponseDTO>> response =
+                new ApiResponse<>(
+                        "Cloud accounts fetched successfully",
+                        cloudAccounts,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<CloudAccount>>> getCloudAccountById(@PathVariable UUID id) {
+    public ResponseEntity<
+            ApiResponse<CloudAccountResponseDTO>>
+    getCloudAccount(@PathVariable UUID id) {
 
-        Optional<CloudAccount> cloudAccount = cloudAccountService.getCloudAccount(id);
+        CloudAccountResponseDTO cloudAccount =
+                cloudAccountService.getCloudAccount(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Cloud Account fetched successfully", cloudAccount, true));
+        ApiResponse<CloudAccountResponseDTO> response =
+                new ApiResponse<>(
+                        "Cloud account fetched successfully",
+                        cloudAccount,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<CloudAccount>> createCloudAccount(@RequestBody CloudAccount cloudAccount) {
 
-        CloudAccount createdCloudAccount = cloudAccountService.newCloudAccount(cloudAccount);
+    // CREATE
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<CloudAccountResponseDTO>>
+    newCloudAccount(
+            @Valid @RequestBody CloudAccountRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Cloud Account created successfully", createdCloudAccount, true));
+        CloudAccountResponseDTO cloudAccount =
+                cloudAccountService.newCloudAccount(dto);
+
+        ApiResponse<CloudAccountResponseDTO> response =
+                new ApiResponse<>(
+                        "Cloud account created successfully",
+                        cloudAccount,
+                        true);
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<CloudAccount>> updateCloudAccount(
-            @PathVariable Long id,
-            @RequestBody CloudAccount cloudAccount) {
 
-        CloudAccount updatedCloudAccount = cloudAccountService.UpdateCloudAccount(cloudAccount);
+    // UPDATE
+    @PutMapping("/update/{id}")
+    public ResponseEntity<
+            ApiResponse<CloudAccountResponseDTO>>
+    updateCloudAccount(
+            @PathVariable UUID id,
+            @Valid @RequestBody CloudAccountRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Cloud Account updated successfully", updatedCloudAccount, true));
+        CloudAccountResponseDTO cloudAccount =
+                cloudAccountService.updateCloudAccount(
+                        id, dto);
+
+        ApiResponse<CloudAccountResponseDTO> response =
+                new ApiResponse<>(
+                        "Cloud account updated successfully",
+                        cloudAccount,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteCloudAccount(@PathVariable UUID id) {
+
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteCloudAccount(@PathVariable UUID id) {
 
         cloudAccountService.deleteCloudAccount(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Cloud Account deleted successfully", null, true));
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        "Cloud account deleted successfully",
+                        null,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 }

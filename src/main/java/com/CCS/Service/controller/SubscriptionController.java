@@ -70,7 +70,7 @@ public class SubscriptionController {
 
 
     // CREATE
-    @PostMapping
+    @PostMapping("/{new}")
     public ResponseEntity<ApiResponse<SubscriptionResponseDTO>>
     newSubscription(
             @Valid @RequestBody SubscriptionRequestDTO dto) {
