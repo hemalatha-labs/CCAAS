@@ -1,10 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,60 +16,147 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.CloudResourceRequestDTO;
+import com.CCS.Service.ResponseDTO.CloudResourceResponseDTO;
 import com.CCS.Service.Service.CloudResourceService;
-import com.CCS.Service.model.CloudResource;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/cloudresource")
+@RequestMapping("/api/cloud-resources")
+@RequiredArgsConstructor
 public class CloudResourceController {
 
     @Autowired
     private CloudResourceService cloudResourceService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<CloudResource>>> getAllCloudResources() {
 
-        List<CloudResource> cloudResources = cloudResourceService.getAllCloudResources();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<CloudResourceResponseDTO>>>
+    getAllCloudResources() {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Cloud Resources fetched successfully", cloudResources, true));
+        List<CloudResourceResponseDTO> resources =
+                cloudResourceService
+                        .getAllCloudResources();
+
+        ApiResponse<List<CloudResourceResponseDTO>> response =
+                new ApiResponse<>(
+                        "Cloud resources fetched successfully",
+                        resources,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<CloudResource>>> getCloudResourceById(@PathVariable UUID id) {
+    public ResponseEntity<
+            ApiResponse<CloudResourceResponseDTO>>
+    getCloudResource(
+            @PathVariable UUID id) {
 
-        Optional<CloudResource> cloudResource = cloudResourceService.getCloudResource(id);
+        CloudResourceResponseDTO resource =
+                cloudResourceService
+                        .getCloudResource(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Cloud Resource fetched successfully", cloudResource, true));
+        ApiResponse<CloudResourceResponseDTO> response =
+                new ApiResponse<>(
+                        "Cloud resource fetched successfully",
+                        resource,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<CloudResource>> createCloudResource(@RequestBody CloudResource cloudResource) {
 
-        CloudResource createdCloudResource = cloudResourceService.newCloudResource(cloudResource);
+    // GET BY CLOUD ACCOUNT
+    @GetMapping("/account/{cloudAccountId}")
+    public ResponseEntity<
+            ApiResponse<List<CloudResourceResponseDTO>>>
+    getResourcesByCloudAccount(
+            @PathVariable UUID cloudAccountId) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Cloud Resource created successfully", createdCloudResource, true));
+        List<CloudResourceResponseDTO> resources =
+                cloudResourceService
+                        .getResourcesByCloudAccount(
+                                cloudAccountId);
+
+        ApiResponse<List<CloudResourceResponseDTO>> response =
+                new ApiResponse<>(
+                        "Cloud resources fetched successfully",
+                        resources,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<CloudResource>> updateCloudResource(
-            @PathVariable Long id,
-            @RequestBody CloudResource cloudResource) {
 
-        CloudResource updatedCloudResource = cloudResourceService.UpdateCloudResource(cloudResource);
+    // CREATE
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<CloudResourceResponseDTO>>
+    newCloudResource(
+            @Valid @RequestBody
+            CloudResourceRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Cloud Resource updated successfully", updatedCloudResource, true));
+        CloudResourceResponseDTO resource =
+                cloudResourceService
+                        .newCloudResource(dto);
+
+        ApiResponse<CloudResourceResponseDTO> response =
+                new ApiResponse<>(
+                        "Cloud resource created successfully",
+                        resource,
+                        true);
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteCloudResource(@PathVariable UUID id) {
 
-        cloudResourceService.deleteCloudResource(id);
+    // UPDATE
+    @PutMapping("/update/{id}")
+    public ResponseEntity<
+            ApiResponse<CloudResourceResponseDTO>>
+    updateCloudResource(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            CloudResourceRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Cloud Resource deleted successfully", null, true));
+        CloudResourceResponseDTO resource =
+                cloudResourceService
+                        .updateCloudResource(id, dto);
+
+        ApiResponse<CloudResourceResponseDTO> response =
+                new ApiResponse<>(
+                        "Cloud resource updated successfully",
+                        resource,
+                        true);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteCloudResource(
+            @PathVariable UUID id) {
+
+        cloudResourceService
+                .deleteCloudResource(id);
+
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        "Cloud resource deleted successfully",
+                        null,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 }

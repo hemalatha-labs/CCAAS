@@ -3,8 +3,6 @@ package com.CCS.Service.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.CCS.Service.Enumuration.ResourceType;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -15,15 +13,16 @@ import lombok.Data;
 
 @Entity
 @Table(name="Simulation")
-@Data
+//@Data
 public class Simulation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID simulationId;
 	
 	
-	@Enumerated
-	private ResourceType resourceType;
+	//@Enumerated
+	//private ResourceType resourceType;
+	//private ResourceType resourceType;
 	
 	private String configuration;//JSON if your guide allows it
 	private LocalDateTime simulationDate;
