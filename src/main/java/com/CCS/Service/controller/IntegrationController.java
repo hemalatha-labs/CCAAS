@@ -1,10 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,60 +16,117 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.IntegrationRequestDTO;
+import com.CCS.Service.ResponseDTO.IntegrationResponseDTO;
 import com.CCS.Service.Service.IntegrationService;
-import com.CCS.Service.model.Integration;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/integration")
+@RequestMapping("/api/integrations")
+@RequiredArgsConstructor
 public class IntegrationController {
 
     @Autowired
     private IntegrationService integrationService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<Integration>>> getAllIntegrations() {
 
-        List<Integration> integrations = integrationService.getAllIntegrations();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<IntegrationResponseDTO>>>
+    getAllIntegrations() {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Integrations fetched successfully", integrations, true));
+        List<IntegrationResponseDTO> integrations =
+                integrationService.getAllIntegrations();
+
+        ApiResponse<List<IntegrationResponseDTO>> response =
+                new ApiResponse<>(
+                        "Integrations fetched successfully",
+                        integrations,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<Integration>>> getIntegrationById(@PathVariable UUID id) {
+    public ResponseEntity<
+            ApiResponse<IntegrationResponseDTO>>
+    getIntegration(@PathVariable UUID id) {
 
-        Optional<Integration> integration = integrationService.getIntegration(id);
+        IntegrationResponseDTO integration =
+                integrationService.getIntegration(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Integration fetched successfully", integration, true));
+        ApiResponse<IntegrationResponseDTO> response =
+                new ApiResponse<>(
+                        "Integration fetched successfully",
+                        integration,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<Integration>> createIntegration(@RequestBody Integration integration) {
 
-        Integration createdIntegration = integrationService.newIntegration(integration);
+    // CREATE
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<IntegrationResponseDTO>>
+    newIntegration(
+            @Valid @RequestBody IntegrationRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Integration created successfully", createdIntegration, true));
+        IntegrationResponseDTO integration =
+                integrationService.newIntegration(dto);
+
+        ApiResponse<IntegrationResponseDTO> response =
+                new ApiResponse<>(
+                        "Integration created successfully",
+                        integration,
+                        true);
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Integration>> updateIntegration(
-            @PathVariable Long id,
-            @RequestBody Integration integration) {
 
-        Integration updatedIntegration = integrationService.UpdateIntegration(integration);
+    // UPDATE
+    @PutMapping("/update/{id}")
+    public ResponseEntity<
+            ApiResponse<IntegrationResponseDTO>>
+    updateIntegration(
+            @PathVariable UUID id,
+            @Valid @RequestBody IntegrationRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Integration updated successfully", updatedIntegration, true));
+        IntegrationResponseDTO integration =
+                integrationService.updateIntegration(
+                        id, dto);
+
+        ApiResponse<IntegrationResponseDTO> response =
+                new ApiResponse<>(
+                        "Integration updated successfully",
+                        integration,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteIntegration(@PathVariable UUID id) {
+
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteIntegration(@PathVariable UUID id) {
 
         integrationService.deleteIntegration(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Integration deleted successfully", null, true));
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        "Integration deleted successfully",
+                        null,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 }
