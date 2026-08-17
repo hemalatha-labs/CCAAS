@@ -1,33 +1,31 @@
 package com.CCS.Service.model;
 
-import com.CCS.Service.Enumuration.Role;
+import java.util.UUID;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "user")
+@Table(name ="users")
 @Data
 public class User {
 
     @Id
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID userId;
 
     private String name;
 
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private String role;
 
-    private Boolean status;
-  
+    private String status;
+
+    private UUID tenantId;
 }

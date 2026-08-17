@@ -1,75 +1,103 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.service.annotation.PutExchange;
+import org.springframework.web.bind.annotation.*;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.UserRequestDTO;
+import com.CCS.Service.ResponseDTO.UserResponseDTO;
 import com.CCS.Service.Service.UserService;
-import com.CCS.Service.model.User;
 
-import jakarta.annotation.PostConstruct;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
-	
-	@Autowired
-	private UserService userService;
-	
-	@GetMapping("/all")
-	public ResponseEntity<ApiResponse<List<User>>> getAllUser(){
-		List<User> user = userService.getAllUsers();
-		
-		return ResponseEntity.ok(new ApiResponse<>("User fetched sucussfully", user, true)
-				);
-	}
-	
-	@GetMapping("/{id}")
-	public ResponseEntity<ApiResponse<Optional<User>>> getUserById(@PathVariable Long id){
-		Optional<User> user = Optional.of(userService.getUser(id));
-		return ResponseEntity.ok( new ApiResponse<>("User fetched by id", user, true)
-				);
-	}
-	
-	
-	@PostMapping("/new")
-	public ResponseEntity<ApiResponse<User>> createUser(@RequestBody User user){
-			
-		User Createuser = userService.newUser(user);
-		
-		return ResponseEntity.ok(new ApiResponse<>("User created", Createuser, true)
-				);
-		
-}
-	
-	@PutMapping("/{id}")
-	public ResponseEntity<ApiResponse<User>> upDateUser(@PathVariable Long id , 
-														@RequestBody User user){
-		User updateUser = userService.updateUser(id,user);
-		
-		return ResponseEntity.ok( new ApiResponse<>("User updated successfully", updateUser , true)
-				);	
-	}
-	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<ApiResponse<User>> deleteUser(@PathVariable Long id){
-		userService.deleteUser(id);
-		
-		return ResponseEntity.ok(new ApiResponse<>("User deleted", null, true)
-				);
-				
-	}
-	
+
+    @Autowired
+    private UserService userService;
+
+
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<UserResponseDTO>>>
+    getAllUsers() {
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Users fetched successfully",
+                        userService.getAllUsers(),
+                        true));
+    }
+
+
+    // GET BY ID
+    @GetMapping("/{id}")
+    public ResponseEntity<
+            ApiResponse<UserResponseDTO>>
+    getUser(@PathVariable UUID id) {
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "User fetched successfully",
+                        userService.getUser(id),
+                        true));
+    }
+
+
+    // CREATE
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<UserResponseDTO>>
+    newUser(
+            @Valid @RequestBody
+            UserRequestDTO dto) {
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(
+                        "User created successfully",
+                        userService.newUser(dto),
+                        true),
+                HttpStatus.CREATED);
+    }
+
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<
+            ApiResponse<UserResponseDTO>>
+    updateUser(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            UserRequestDTO dto) {
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "User updated successfully",
+                        userService.updateUser(id, dto),
+                        true));
+    }
+
+
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteUser(@PathVariable UUID id) {
+
+        userService.deleteUser(id);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "User deleted successfully",
+                        null,
+                        true));
+    }
 }

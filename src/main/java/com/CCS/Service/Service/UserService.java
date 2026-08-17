@@ -1,11 +1,16 @@
 package com.CCS.Service.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.CCS.Service.Mapper.UserMapper;
 import com.CCS.Service.Repo.UserRepo;
+import com.CCS.Service.RequestDTO.UserRequestDTO;
+import com.CCS.Service.ResponseDTO.UserResponseDTO;
+import com.CCS.Service.globalException.DuplicateResourceException;
 import com.CCS.Service.globalException.ResourceNotFoundException;
 import com.CCS.Service.model.User;
 
@@ -15,68 +20,111 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 
-	@Autowired
-    private  UserRepo userRepo;
+    @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
+    private UserMapper userMapper;
 
 
-    public List<User> getAllUsers() {
-        return userRepo.findAll();
+    // GET ALL
+    public List<UserResponseDTO> getAllUsers() {
+
+        return userRepo.findAll()
+                .stream()
+                .map(userMapper::toResponseDTO)
+                .toList();
     }
 
-   
-    public User getUser(Long id) {
-        return userRepo.findById(id)
+
+    // GET BY ID
+    public UserResponseDTO getUser(UUID id) {
+
+        User user = userRepo.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found with id: " + id));
-    }
- 
-    public User newUser(User user) {
+                        new ResourceNotFoundException(
+                                "User not found with id: " + id));
 
-        if (userRepo.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email already exists");
-        }
-
-        return userRepo.save(user);
+        return userMapper.toResponseDTO(user);
     }
 
-   
-    public User updateUser(Long id, User updatedUser) {
 
-        User existingUser = getUser(id);
+    // CREATE
+    public UserResponseDTO newUser(
+            UserRequestDTO dto) {
 
-        if (updatedUser.getName() != null) {
-            existingUser.setName(updatedUser.getName());
+        if (userRepo.existsByEmail(dto.getEmail())) {
+
+            throw new DuplicateResourceException(
+                    "Email already exists: " + dto.getEmail());
         }
 
-        if (updatedUser.getEmail() != null) {
+        User user = userMapper.toEntity(dto);
 
-            if (userRepo.existsByEmail(updatedUser.getEmail())
-                    && !existingUser.getEmail().equals(updatedUser.getEmail())) {
+        return userMapper.toResponseDTO(
+                userRepo.save(user));
+    }
 
-                throw new RuntimeException("Email already exists");
+
+    // UPDATE
+    public UserResponseDTO updateUser(
+            UUID id,
+            UserRequestDTO dto) {
+
+        User existingUser = userRepo.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found with id: " + id));
+
+
+        if (dto.getName() != null) {
+            existingUser.setName(dto.getName());
+        }
+
+
+        if (dto.getEmail() != null) {
+
+            if (userRepo.existsByEmail(dto.getEmail())
+                    && !existingUser.getEmail()
+                    .equals(dto.getEmail())) {
+
+                throw new DuplicateResourceException(
+                        "Email already exists: "
+                                + dto.getEmail());
             }
 
-            existingUser.setEmail(updatedUser.getEmail());
+            existingUser.setEmail(dto.getEmail());
         }
 
-        if (updatedUser.getRole() != null) {
-            existingUser.setRole(updatedUser.getRole());
+
+        if (dto.getRole() != null) {
+            existingUser.setRole(dto.getRole());
         }
 
-        if (updatedUser.getStatus() != null) {
-            existingUser.setStatus(updatedUser.getStatus());
+
+        if (dto.getStatus() != null) {
+            existingUser.setStatus(dto.getStatus());
         }
 
-        return userRepo.save(existingUser);
+
+        if (dto.getTenantId() != null) {
+            existingUser.setTenantId(dto.getTenantId());
+        }
+
+
+        return userMapper.toResponseDTO(
+                userRepo.save(existingUser));
     }
 
-    
-    public void deleteUser(Long id) {
 
-        User user = getUser(id);
+    // DELETE
+    public void deleteUser(UUID id) {
+
+        User user = userRepo.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found with id: " + id));
 
         userRepo.delete(user);
     }
-
-	
 }

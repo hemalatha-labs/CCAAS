@@ -1,16 +1,12 @@
 package com.CCS.Service.Repo;
 
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import com.CCS.Service.model.*;
-@Repository
+import com.CCS.Service.model.User;
 
+public interface UserRepo extends JpaRepository<User, UUID> {
 
-public interface UserRepo extends JpaRepository<User, Long>{
-
-	boolean existsByEmail(String email);
-	Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
 }
