@@ -1,9 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,72 +16,97 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.RemediationScriptRequestDTO;
+import com.CCS.Service.ResponseDTO.RemediationScriptResponseDTO;
 import com.CCS.Service.Service.RemediationScriptService;
-import com.CCS.Service.model.RemediationScript;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/remediationscript")
+@RequestMapping("/api/remediation-scripts")
+@RequiredArgsConstructor
 public class RemediationScriptController {
 
     @Autowired
-    private RemediationScriptService remediationScriptService;
+    private RemediationScriptService
+            remediationScriptService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<RemediationScript>>> getAllRemediationScripts() {
 
-        List<RemediationScript> remediationScripts =
-                remediationScriptService.getAllRemediationScripts();
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<
+                List<RemediationScriptResponseDTO>>>
+    getAllScripts() {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Remediation Scripts fetched successfully",
-                        remediationScripts, true));
+                new ApiResponse<>(
+                        "Remediation scripts fetched successfully",
+                        remediationScriptService
+                                .getAllScripts(),
+                        true));
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<RemediationScript>>> getRemediationScriptById(
-            @PathVariable Long id) {
-
-        Optional<RemediationScript> remediationScript =
-                remediationScriptService.getRemediationScript(id);
+    public ResponseEntity<
+            ApiResponse<RemediationScriptResponseDTO>>
+    getScript(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Remediation Script fetched successfully",
-                        remediationScript, true));
+                new ApiResponse<>(
+                        "Remediation script fetched successfully",
+                        remediationScriptService
+                                .getScript(id),
+                        true));
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<RemediationScript>> createRemediationScript(
-            @RequestBody RemediationScript remediationScript) {
 
-        RemediationScript createdRemediationScript =
-                remediationScriptService.newRemediationScript(remediationScript);
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<RemediationScriptResponseDTO>>
+    newScript(
+            @Valid @RequestBody
+            RemediationScriptRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Remediation Script created successfully",
-                        createdRemediationScript, true));
+        return new ResponseEntity<>(
+                new ApiResponse<>(
+                        "Remediation script created successfully",
+                        remediationScriptService
+                                .newScript(dto),
+                        true),
+                HttpStatus.CREATED);
     }
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<RemediationScript>> updateRemediationScript(
-            @PathVariable Long id,
-            @RequestBody RemediationScript remediationScript) {
-
-        RemediationScript updatedRemediationScript =
-                remediationScriptService.UpdateRemediationScript(remediationScript);
+    public ResponseEntity<
+            ApiResponse<RemediationScriptResponseDTO>>
+    updateScript(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            RemediationScriptRequestDTO dto) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Remediation Script updated successfully",
-                        updatedRemediationScript, true));
+                new ApiResponse<>(
+                        "Remediation script updated successfully",
+                        remediationScriptService
+                                .updateScript(id, dto),
+                        true));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteRemediationScript(
-            @PathVariable Long id) {
 
-        remediationScriptService.deleteRemediationScript(id);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteScript(@PathVariable UUID id) {
+
+        remediationScriptService
+                .deleteScript(id);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Remediation Script deleted successfully",
-                        null, true));
+                new ApiResponse<>(
+                        "Remediation script deleted successfully",
+                        null,
+                        true));
     }
 }
