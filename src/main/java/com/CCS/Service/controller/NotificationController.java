@@ -1,9 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,72 +16,93 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.NotificationRequestDTO;
+import com.CCS.Service.ResponseDTO.NotificationResponseDTO;
 import com.CCS.Service.Service.NotificationService;
-import com.CCS.Service.model.Notification;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/notification")
+@RequestMapping("/api/notifications")
+@RequiredArgsConstructor
 public class NotificationController {
 
     @Autowired
     private NotificationService notificationService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<Notification>>> getAllNotifications() {
 
-        List<Notification> notifications =
-                notificationService.getAllNotifications();
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<NotificationResponseDTO>>>
+    getAllNotifications() {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Notifications fetched successfully",
-                        notifications, true));
+                new ApiResponse<>(
+                        "Notifications fetched successfully",
+                        notificationService
+                                .getAllNotifications(),
+                        true));
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<Notification>>> getNotificationById(
-            @PathVariable Long id) {
-
-        Optional<Notification> notification =
-                notificationService.getNotification(id);
+    public ResponseEntity<
+            ApiResponse<NotificationResponseDTO>>
+    getNotification(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Notification fetched successfully",
-                        notification, true));
+                new ApiResponse<>(
+                        "Notification fetched successfully",
+                        notificationService
+                                .getNotification(id),
+                        true));
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<Notification>> createNotification(
-            @RequestBody Notification notification) {
 
-        Notification createdNotification =
-                notificationService.newNotification(notification);
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<NotificationResponseDTO>>
+    newNotification(
+            @Valid @RequestBody
+            NotificationRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Notification created successfully",
-                        createdNotification, true));
+        return new ResponseEntity<>(
+                new ApiResponse<>(
+                        "Notification created successfully",
+                        notificationService
+                                .newNotification(dto),
+                        true),
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Notification>> updateNotification(
-            @PathVariable Long id,
-            @RequestBody Notification notification) {
 
-        Notification updatedNotification =
-                notificationService.UpdateNotification(notification);
+    @PutMapping("/{id}/read")
+    public ResponseEntity<
+            ApiResponse<NotificationResponseDTO>>
+    markAsRead(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Notification updated successfully",
-                        updatedNotification, true));
+                new ApiResponse<>(
+                        "Notification marked as read",
+                        notificationService
+                                .markAsRead(id),
+                        true));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteNotification(
-            @PathVariable Long id) {
 
-        notificationService.deleteNotification(id);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteNotification(
+            @PathVariable UUID id) {
+
+        notificationService
+                .deleteNotification(id);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Notification deleted successfully",
-                        null, true));
+                new ApiResponse<>(
+                        "Notification deleted successfully",
+                        null,
+                        true));
     }
 }
