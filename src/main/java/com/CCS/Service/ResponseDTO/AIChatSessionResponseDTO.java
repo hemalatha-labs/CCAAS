@@ -1,27 +1,19 @@
-package com.CCS.Service.model;
+package com.CCS.Service.ResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.*;
-
 import lombok.Data;
 
-@Entity
-@Table(name = "ai_chat_session")
 @Data
-public class AIChatSession {
+public class AIChatSessionResponseDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID sessionId;
 
     private String sessionName;
 
-    @Column(columnDefinition = "TEXT")
     private String userMessage;
 
-    @Column(columnDefinition = "TEXT")
     private String aiResponse;
 
     private LocalDateTime createdAt;
