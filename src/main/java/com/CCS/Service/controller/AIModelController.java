@@ -1,9 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,61 +16,90 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.AIModelRequestDTO;
+import com.CCS.Service.ResponseDTO.AIModelResponseDTO;
 import com.CCS.Service.Service.AIModelService;
-import com.CCS.Service.model.AIModel;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/aimodel")
+@RequestMapping("/api/ai-models")
+@RequiredArgsConstructor
 public class AIModelController {
 
     @Autowired
     private AIModelService aiModelService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<AIModel>>> getAllAIModels() {
 
-        List<AIModel> aiModels = aiModelService.getAllAIModel();
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<AIModelResponseDTO>>>
+    getAllModels() {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("AI Models fetched successfully", aiModels, true));
+                new ApiResponse<>(
+                        "AI models fetched successfully",
+                        aiModelService.getAllModels(),
+                        true));
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<AIModel>>> getAIModelById(@PathVariable Long id) {
-
-        Optional<AIModel> aiModel = aiModelService.getAIModel(id);
-
-        return ResponseEntity.ok(
-                new ApiResponse<>("AI Model fetched successfully", aiModel, true));
-    }
-
-    @PostMapping
-    public ResponseEntity<ApiResponse<AIModel>> createAIModel(
-            @RequestBody AIModel aiModel) {
-
-        AIModel createdAIModel = aiModelService.newAIModel(aiModel);
+    public ResponseEntity<
+            ApiResponse<AIModelResponseDTO>>
+    getModel(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("AI Model created successfully", createdAIModel, true));
+                new ApiResponse<>(
+                        "AI model fetched successfully",
+                        aiModelService.getModel(id),
+                        true));
     }
+
+
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<AIModelResponseDTO>>
+    newModel(
+            @Valid @RequestBody
+            AIModelRequestDTO dto) {
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(
+                        "AI model created successfully",
+                        aiModelService.newModel(dto),
+                        true),
+                HttpStatus.CREATED);
+    }
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<AIModel>> updateAIModel(
-            @PathVariable Long id,
-            @RequestBody AIModel aiModel) {
-
-        AIModel updatedAIModel = aiModelService.UpdateAIModel(aiModel);
+    public ResponseEntity<
+            ApiResponse<AIModelResponseDTO>>
+    updateModel(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            AIModelRequestDTO dto) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("AI Model updated successfully", updatedAIModel, true));
+                new ApiResponse<>(
+                        "AI model updated successfully",
+                        aiModelService.updateModel(id, dto),
+                        true));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteAIModel(@PathVariable Long id) {
 
-        aiModelService.deleteAIModel(id);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteModel(@PathVariable UUID id) {
+
+        aiModelService.deleteModel(id);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("AI Model deleted successfully", null, true));
+                new ApiResponse<>(
+                        "AI model deleted successfully",
+                        null,
+                        true));
     }
 }
