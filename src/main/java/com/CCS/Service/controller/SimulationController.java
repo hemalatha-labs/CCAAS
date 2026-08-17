@@ -1,77 +1,99 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.SimulationRequestDTO;
+import com.CCS.Service.ResponseDTO.SimulationResponseDTO;
 import com.CCS.Service.Service.SimulationService;
-import com.CCS.Service.model.Simulation;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/simulation")
+@RequestMapping("/api/simulations")
+@RequiredArgsConstructor
 public class SimulationController {
 
     @Autowired
     private SimulationService simulationService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<Simulation>>> getAllSimulations() {
 
-        List<Simulation> simulations = simulationService.getAllSimulations();
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<SimulationResponseDTO>>>
+    getAllSimulations() {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Simulations fetched successfully", simulations, true));
+                new ApiResponse<>(
+                        "Simulations fetched successfully",
+                        simulationService.getAllSimulations(),
+                        true));
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<Simulation>>> getSimulationById(@PathVariable UUID id) {
-
-        Optional<Simulation> simulation = simulationService.getSimulation(id);
-
-        return ResponseEntity.ok(
-                new ApiResponse<>("Simulation fetched successfully", simulation, true));
-    }
-
-    @PostMapping
-    public ResponseEntity<ApiResponse<Simulation>> createSimulation(
-            @RequestBody Simulation simulation) {
-
-        Simulation createdSimulation = simulationService.newSimulation(simulation);
+    public ResponseEntity<
+            ApiResponse<SimulationResponseDTO>>
+    getSimulation(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Simulation created successfully", createdSimulation, true));
+                new ApiResponse<>(
+                        "Simulation fetched successfully",
+                        simulationService.getSimulation(id),
+                        true));
     }
+
+
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<SimulationResponseDTO>>
+    newSimulation(
+            @Valid @RequestBody
+            SimulationRequestDTO dto) {
+
+        return new ResponseEntity<>(
+                new ApiResponse<>(
+                        "Simulation created successfully",
+                        simulationService.newSimulation(dto),
+                        true),
+                HttpStatus.CREATED);
+    }
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Simulation>> updateSimulation(
-            @PathVariable Long id,
-            @RequestBody Simulation simulation) {
-
-        Simulation updatedSimulation =
-                simulationService.UpdateSimulation(simulation);
+    public ResponseEntity<
+            ApiResponse<SimulationResponseDTO>>
+    updateSimulation(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            SimulationRequestDTO dto) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Simulation updated successfully", updatedSimulation, true));
+                new ApiResponse<>(
+                        "Simulation updated successfully",
+                        simulationService
+                                .updateSimulation(id, dto),
+                        true));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteSimulation(@PathVariable UUID id) {
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteSimulation(@PathVariable UUID id) {
 
         simulationService.deleteSimulation(id);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Simulation deleted successfully", null, true));
+                new ApiResponse<>(
+                        "Simulation deleted successfully",
+                        null,
+                        true));
     }
 }

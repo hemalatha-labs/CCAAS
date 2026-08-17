@@ -1,19 +1,13 @@
-package com.CCS.Service.model;
+package com.CCS.Service.ResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.*;
-
 import lombok.Data;
 
-@Entity
-@Table(name = "simulation")
 @Data
-public class Simulation {
+public class SimulationResponseDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID simulationId;
 
     private String simulationName;

@@ -1,85 +1,98 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.ThreatIntelligenceRequestDTO;
+import com.CCS.Service.ResponseDTO.ThreatIntelligenceResponseDTO;
 import com.CCS.Service.Service.ThreatIntelligenceService;
-import com.CCS.Service.model.ThreatIntelligence;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/threatintelligence")
+@RequestMapping("/api/threat-intelligence")
+@RequiredArgsConstructor
 public class ThreatIntelligenceController {
 
     @Autowired
     private ThreatIntelligenceService threatIntelligenceService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<ThreatIntelligence>>> getAllThreatIntelligence() {
 
-        List<ThreatIntelligence> threatIntelligenceList =
-                threatIntelligenceService.getAllThreatIntelligences();
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<ThreatIntelligenceResponseDTO>>>
+    getAllThreats() {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Threat Intelligence fetched successfully",
-                        threatIntelligenceList, true));
+                new ApiResponse<>(
+                        "Threat intelligence fetched successfully",
+                        threatIntelligenceService.getAllThreats(),
+                        true));
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<ThreatIntelligence>>> getThreatIntelligenceById(
-            @PathVariable Long id) {
-
-        Optional<ThreatIntelligence> threatIntelligence =
-                threatIntelligenceService.getThreatIntelligence(id);
+    public ResponseEntity<
+            ApiResponse<ThreatIntelligenceResponseDTO>>
+    getThreat(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Threat Intelligence fetched successfully",
-                        threatIntelligence, true));
+                new ApiResponse<>(
+                        "Threat intelligence fetched successfully",
+                        threatIntelligenceService.getThreat(id),
+                        true));
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<ThreatIntelligence>> createThreatIntelligence(
-            @RequestBody ThreatIntelligence threatIntelligence) {
 
-        ThreatIntelligence createdThreatIntelligence =
-                threatIntelligenceService.newThreatIntelligence(threatIntelligence);
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<ThreatIntelligenceResponseDTO>>
+    newThreat(
+            @Valid @RequestBody
+            ThreatIntelligenceRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Threat Intelligence created successfully",
-                        createdThreatIntelligence, true));
+        return new ResponseEntity<>(
+                new ApiResponse<>(
+                        "Threat intelligence created successfully",
+                        threatIntelligenceService.newThreat(dto),
+                        true),
+                HttpStatus.CREATED);
     }
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ThreatIntelligence>> updateThreatIntelligence(
-            @PathVariable Long id,
-            @RequestBody ThreatIntelligence threatIntelligence) {
-
-        ThreatIntelligence updatedThreatIntelligence =
-                threatIntelligenceService.UpdateThreatIntelligence(threatIntelligence);
+    public ResponseEntity<
+            ApiResponse<ThreatIntelligenceResponseDTO>>
+    updateThreat(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            ThreatIntelligenceRequestDTO dto) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Threat Intelligence updated successfully",
-                        updatedThreatIntelligence, true));
+                new ApiResponse<>(
+                        "Threat intelligence updated successfully",
+                        threatIntelligenceService.updateThreat(id, dto),
+                        true));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteThreatIntelligence(@PathVariable Long id) {
 
-        threatIntelligenceService.deleteThreatIntelligence(id);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteThreat(@PathVariable UUID id) {
+
+        threatIntelligenceService.deleteThreat(id);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Threat Intelligence deleted successfully",
-                        null, true));
+                new ApiResponse<>(
+                        "Threat intelligence deleted successfully",
+                        null,
+                        true));
     }
 }

@@ -1,19 +1,13 @@
-package com.CCS.Service.model;
+package com.CCS.Service.ResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.*;
-
 import lombok.Data;
 
-@Entity
-@Table(name = "compliance_benchmark")
 @Data
-public class ComplianceBenchmark {
+public class ComplianceBenchmarkResponseDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID benchmarkId;
 
     private String benchmarkName;

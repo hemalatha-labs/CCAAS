@@ -1,86 +1,99 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.ComplianceBenchmarkRequestDTO;
+import com.CCS.Service.ResponseDTO.ComplianceBenchmarkResponseDTO;
 import com.CCS.Service.Service.ComplianceBenchmarkService;
-import com.CCS.Service.model.ComplianceBenchmark;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/compliancebenchmark")
+@RequestMapping("/api/compliance-benchmarks")
+@RequiredArgsConstructor
 public class ComplianceBenchmarkController {
 
     @Autowired
     private ComplianceBenchmarkService complianceBenchmarkService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<ComplianceBenchmark>>> getAllComplianceBenchmarks() {
 
-        List<ComplianceBenchmark> benchmarks =
-                complianceBenchmarkService.getAllComplianceBenchmarks();
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<ComplianceBenchmarkResponseDTO>>>
+    getAllBenchmarks() {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Benchmarks fetched successfully",
-                        benchmarks, true));
+                new ApiResponse<>(
+                        "Compliance benchmarks fetched successfully",
+                        complianceBenchmarkService.getAllBenchmarks(),
+                        true));
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<ComplianceBenchmark>>> getComplianceBenchmarkById(
-            @PathVariable Long id) {
-
-        Optional<ComplianceBenchmark> benchmark =
-                complianceBenchmarkService.getComplianceBenchmark(id);
+    public ResponseEntity<
+            ApiResponse<ComplianceBenchmarkResponseDTO>>
+    getBenchmark(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Benchmark fetched successfully",
-                        benchmark, true));
+                new ApiResponse<>(
+                        "Compliance benchmark fetched successfully",
+                        complianceBenchmarkService.getBenchmark(id),
+                        true));
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<ComplianceBenchmark>> createComplianceBenchmark(
-            @RequestBody ComplianceBenchmark benchmark) {
 
-        ComplianceBenchmark createdBenchmark =
-                complianceBenchmarkService.newComplianceBenchmark(benchmark);
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<ComplianceBenchmarkResponseDTO>>
+    newBenchmark(
+            @Valid @RequestBody
+            ComplianceBenchmarkRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Benchmark created successfully",
-                        createdBenchmark, true));
+        return new ResponseEntity<>(
+                new ApiResponse<>(
+                        "Compliance benchmark created successfully",
+                        complianceBenchmarkService.newBenchmark(dto),
+                        true),
+                HttpStatus.CREATED);
     }
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ComplianceBenchmark>> updateComplianceBenchmark(
-            @PathVariable Long id,
-            @RequestBody ComplianceBenchmark benchmark) {
-
-        ComplianceBenchmark updatedBenchmark =
-                complianceBenchmarkService.UpdateComplianceBenchmark(benchmark);
+    public ResponseEntity<
+            ApiResponse<ComplianceBenchmarkResponseDTO>>
+    updateBenchmark(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            ComplianceBenchmarkRequestDTO dto) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Benchmark updated successfully",
-                        updatedBenchmark, true));
+                new ApiResponse<>(
+                        "Compliance benchmark updated successfully",
+                        complianceBenchmarkService
+                                .updateBenchmark(id, dto),
+                        true));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteComplianceBenchmark(
-            @PathVariable Long id) {
 
-        complianceBenchmarkService.deleteComplianceBenchmark(id);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteBenchmark(@PathVariable UUID id) {
+
+        complianceBenchmarkService.deleteBenchmark(id);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Benchmark deleted successfully",
-                        null, true));
+                new ApiResponse<>(
+                        "Compliance benchmark deleted successfully",
+                        null,
+                        true));
     }
 }
