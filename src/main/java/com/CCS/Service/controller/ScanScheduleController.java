@@ -1,9 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,62 +16,147 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.ScanScheduleRequestDTO;
+import com.CCS.Service.ResponseDTO.ScanScheduleResponseDTO;
 import com.CCS.Service.Service.ScanScheduleService;
-import com.CCS.Service.model.ScanSchedule;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/scanschedule")
+@RequestMapping("/api/scan-schedules")
+@RequiredArgsConstructor
 public class ScanScheduleController {
 
     @Autowired
     private ScanScheduleService scanScheduleService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<ScanSchedule>>> getAllScanSchedules() {
 
-        List<ScanSchedule> scanSchedules = scanScheduleService.getAllScanSchedules();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<ScanScheduleResponseDTO>>>
+    getAllScanSchedules() {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Scan Schedules fetched successfully", scanSchedules, true));
+        List<ScanScheduleResponseDTO> schedules =
+                scanScheduleService
+                        .getAllScanSchedules();
+
+        ApiResponse<List<ScanScheduleResponseDTO>> response =
+                new ApiResponse<>(
+                        "Scan schedules fetched successfully",
+                        schedules,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<ScanSchedule>>> getScanScheduleById(@PathVariable Long id) {
+    public ResponseEntity<
+            ApiResponse<ScanScheduleResponseDTO>>
+    getScanSchedule(
+            @PathVariable UUID id) {
 
-        Optional<ScanSchedule> scanSchedule = scanScheduleService.getScanSchedule(id);
+        ScanScheduleResponseDTO schedule =
+                scanScheduleService
+                        .getScanSchedule(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Scan Schedule fetched successfully", scanSchedule, true));
+        ApiResponse<ScanScheduleResponseDTO> response =
+                new ApiResponse<>(
+                        "Scan schedule fetched successfully",
+                        schedule,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<ScanSchedule>> createScanSchedule(
-            @RequestBody ScanSchedule scanSchedule) {
 
-        ScanSchedule createdScanSchedule = scanScheduleService.newScanSchedule(scanSchedule);
+    // GET BY CLOUD ACCOUNT
+    @GetMapping("/cloud-account/{cloudAccountId}")
+    public ResponseEntity<
+            ApiResponse<List<ScanScheduleResponseDTO>>>
+    getSchedulesByCloudAccount(
+            @PathVariable UUID cloudAccountId) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Scan Schedule created successfully", createdScanSchedule, true));
+        List<ScanScheduleResponseDTO> schedules =
+                scanScheduleService
+                        .getSchedulesByCloudAccount(
+                                cloudAccountId);
+
+        ApiResponse<List<ScanScheduleResponseDTO>> response =
+                new ApiResponse<>(
+                        "Scan schedules fetched successfully",
+                        schedules,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ScanSchedule>> updateScanSchedule(
-            @PathVariable Long id,
-            @RequestBody ScanSchedule scanSchedule) {
 
-        ScanSchedule updatedScanSchedule =
-                scanScheduleService.UpdateScanSchedule(scanSchedule);
+    // CREATE
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<ScanScheduleResponseDTO>>
+    newScanSchedule(
+            @Valid @RequestBody
+            ScanScheduleRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Scan Schedule updated successfully", updatedScanSchedule, true));
+        ScanScheduleResponseDTO schedule =
+                scanScheduleService
+                        .newScanSchedule(dto);
+
+        ApiResponse<ScanScheduleResponseDTO> response =
+                new ApiResponse<>(
+                        "Scan schedule created successfully",
+                        schedule,
+                        true);
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteScanSchedule(@PathVariable Long id) {
 
-        scanScheduleService.deleteScanSchedule(id);
+    // UPDATE
+    @PutMapping("/update/{id}")
+    public ResponseEntity<
+            ApiResponse<ScanScheduleResponseDTO>>
+    updateScanSchedule(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            ScanScheduleRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Scan Schedule deleted successfully", null, true));
+        ScanScheduleResponseDTO schedule =
+                scanScheduleService
+                        .updateScanSchedule(id, dto);
+
+        ApiResponse<ScanScheduleResponseDTO> response =
+                new ApiResponse<>(
+                        "Scan schedule updated successfully",
+                        schedule,
+                        true);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteScanSchedule(
+            @PathVariable UUID id) {
+
+        scanScheduleService
+                .deleteScanSchedule(id);
+
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        "Scan schedule deleted successfully",
+                        null,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 }
