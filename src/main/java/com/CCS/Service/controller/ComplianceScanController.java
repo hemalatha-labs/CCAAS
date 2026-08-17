@@ -1,78 +1,138 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.ComplianceScanRequestDTO;
+import com.CCS.Service.ResponseDTO.ComplianceScanResponseDTO;
 import com.CCS.Service.Service.ComplianceScanService;
-import com.CCS.Service.model.ComplianceScan;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/compliancescan")
+@RequestMapping("/api/compliance-scans")
+@RequiredArgsConstructor
 public class ComplianceScanController {
 
     @Autowired
     private ComplianceScanService complianceScanService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<ComplianceScan>>> getAllComplianceScans() {
 
-        List<ComplianceScan> complianceScans = complianceScanService.getAllComplianceScans();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<ComplianceScanResponseDTO>>>
+    getAllComplianceScans() {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Scans fetched successfully", complianceScans, true));
+        List<ComplianceScanResponseDTO> scans =
+                complianceScanService
+                        .getAllComplianceScans();
+
+        ApiResponse<List<ComplianceScanResponseDTO>> response =
+                new ApiResponse<>(
+                        "Compliance scans fetched successfully",
+                        scans,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<ComplianceScan>>> getComplianceScanById(@PathVariable UUID id) {
+    public ResponseEntity<
+            ApiResponse<ComplianceScanResponseDTO>>
+    getComplianceScan(
+            @PathVariable UUID id) {
 
-        Optional<ComplianceScan> complianceScan = complianceScanService.getComplianceScan(id);
+        ComplianceScanResponseDTO scan =
+                complianceScanService
+                        .getComplianceScan(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Scan fetched successfully", complianceScan, true));
+        ApiResponse<ComplianceScanResponseDTO> response =
+                new ApiResponse<>(
+                        "Compliance scan fetched successfully",
+                        scan,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<ComplianceScan>> createComplianceScan(
-            @RequestBody ComplianceScan complianceScan) {
 
-        ComplianceScan createdComplianceScan =
-                complianceScanService.newComplianceScan(complianceScan);
+    // GET BY SCHEDULE
+    @GetMapping("/schedule/{scheduleId}")
+    public ResponseEntity<
+            ApiResponse<List<ComplianceScanResponseDTO>>>
+    getScansBySchedule(
+            @PathVariable UUID scheduleId) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Scan created successfully", createdComplianceScan, true));
+        List<ComplianceScanResponseDTO> scans =
+                complianceScanService
+                        .getScansBySchedule(
+                                scheduleId);
+
+        ApiResponse<List<ComplianceScanResponseDTO>> response =
+                new ApiResponse<>(
+                        "Compliance scans fetched successfully",
+                        scans,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ComplianceScan>> updateComplianceScan(
-            @PathVariable Long id,
-            @RequestBody ComplianceScan complianceScan) {
 
-        ComplianceScan updatedComplianceScan =
-                complianceScanService.UpdateComplianceScan(complianceScan);
+    // CREATE / START SCAN
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<ComplianceScanResponseDTO>>
+    newComplianceScan(
+            @Valid @RequestBody
+            ComplianceScanRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Scan updated successfully", updatedComplianceScan, true));
+        ComplianceScanResponseDTO scan =
+                complianceScanService
+                        .newComplianceScan(dto);
+
+        ApiResponse<ComplianceScanResponseDTO> response =
+                new ApiResponse<>(
+                        "Compliance scan started successfully",
+                        scan,
+                        true);
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteComplianceScan(@PathVariable UUID id) {
 
-        complianceScanService.deleteComplianceScan(id);
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteComplianceScan(
+            @PathVariable UUID id) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Scan deleted successfully", null, true));
+        complianceScanService
+                .deleteComplianceScan(id);
+
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        "Compliance scan deleted successfully",
+                        null,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 }
