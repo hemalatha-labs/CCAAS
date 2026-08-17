@@ -1,9 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,62 +16,147 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.ComplianceRuleRequestDTO;
+import com.CCS.Service.ResponseDTO.ComplianceRuleResponseDTO;
 import com.CCS.Service.Service.ComplianceRuleService;
-import com.CCS.Service.model.ComplianceRule;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/compliancerule")
+@RequestMapping("/api/compliance-rules")
+@RequiredArgsConstructor
 public class ComplianceRuleController {
 
     @Autowired
     private ComplianceRuleService complianceRuleService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<ComplianceRule>>> getAllComplianceRules() {
 
-        List<ComplianceRule> rules = complianceRuleService.getAllComplianceRules();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<ComplianceRuleResponseDTO>>>
+    getAllComplianceRules() {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Rules fetched successfully", rules, true));
+        List<ComplianceRuleResponseDTO> rules =
+                complianceRuleService
+                        .getAllComplianceRules();
+
+        ApiResponse<List<ComplianceRuleResponseDTO>> response =
+                new ApiResponse<>(
+                        "Compliance rules fetched successfully",
+                        rules,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<ComplianceRule>>> getComplianceRuleById(@PathVariable Long id) {
+    public ResponseEntity<
+            ApiResponse<ComplianceRuleResponseDTO>>
+    getComplianceRule(
+            @PathVariable UUID id) {
 
-        Optional<ComplianceRule> rule = complianceRuleService.getComplianceRule(id);
+        ComplianceRuleResponseDTO rule =
+                complianceRuleService
+                        .getComplianceRule(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Rule fetched successfully", rule, true));
+        ApiResponse<ComplianceRuleResponseDTO> response =
+                new ApiResponse<>(
+                        "Compliance rule fetched successfully",
+                        rule,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<ComplianceRule>> createComplianceRule(
-            @RequestBody ComplianceRule rule) {
 
-        ComplianceRule createdRule = complianceRuleService.newComplianceRule(rule);
+    // GET BY POLICY
+    @GetMapping("/policy/{policyId}")
+    public ResponseEntity<
+            ApiResponse<List<ComplianceRuleResponseDTO>>>
+    getRulesByPolicy(
+            @PathVariable UUID policyId) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Rule created successfully", createdRule, true));
+        List<ComplianceRuleResponseDTO> rules =
+                complianceRuleService
+                        .getRulesByPolicy(policyId);
+
+        ApiResponse<List<ComplianceRuleResponseDTO>> response =
+                new ApiResponse<>(
+                        "Compliance rules fetched successfully",
+                        rules,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ComplianceRule>> updateComplianceRule(
-            @PathVariable Long id,
-            @RequestBody ComplianceRule rule) {
 
-        ComplianceRule updatedRule =
-                complianceRuleService.UpdateComplianceRule(rule);
+    // CREATE
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<ComplianceRuleResponseDTO>>
+    newComplianceRule(
+            @Valid @RequestBody
+            ComplianceRuleRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Rule updated successfully", updatedRule, true));
+        ComplianceRuleResponseDTO rule =
+                complianceRuleService
+                        .newComplianceRule(dto);
+
+        ApiResponse<ComplianceRuleResponseDTO> response =
+                new ApiResponse<>(
+                        "Compliance rule created successfully",
+                        rule,
+                        true);
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteComplianceRule(@PathVariable Long id) {
 
-        complianceRuleService.deleteComplianceRule(id);
+    // UPDATE
+    @PutMapping("/update/{id}")
+    public ResponseEntity<
+            ApiResponse<ComplianceRuleResponseDTO>>
+    updateComplianceRule(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            ComplianceRuleRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Compliance Rule deleted successfully", null, true));
+        ComplianceRuleResponseDTO rule =
+                complianceRuleService
+                        .updateComplianceRule(
+                                id, dto);
+
+        ApiResponse<ComplianceRuleResponseDTO> response =
+                new ApiResponse<>(
+                        "Compliance rule updated successfully",
+                        rule,
+                        true);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteComplianceRule(
+            @PathVariable UUID id) {
+
+        complianceRuleService
+                .deleteComplianceRule(id);
+
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        "Compliance rule deleted successfully",
+                        null,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 }

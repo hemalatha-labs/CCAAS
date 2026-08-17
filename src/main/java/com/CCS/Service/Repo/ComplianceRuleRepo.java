@@ -1,11 +1,17 @@
 package com.CCS.Service.Repo;
 
+import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import com.CCS.Service.model.ComplianceRule;
-@Repository
-public interface ComplianceRuleRepo extends JpaRepository<ComplianceRule,Long> {
 
+public interface ComplianceRuleRepo
+        extends JpaRepository<ComplianceRule, UUID> {
+
+    boolean existsByRuleName(String ruleName);
+
+    List<ComplianceRule> findByCompliancePolicyPolicyId(
+            UUID policyId);
 }
