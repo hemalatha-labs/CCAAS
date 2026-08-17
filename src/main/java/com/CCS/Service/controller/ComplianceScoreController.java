@@ -15,59 +15,69 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
-import com.CCS.Service.RequestDTO.ScanReportRequestDTO;
-import com.CCS.Service.ResponseDTO.ScanReportResponseDTO;
-import com.CCS.Service.Service.ScanReportService;
+import com.CCS.Service.RequestDTO.ComplianceScoreRequestDTO;
+import com.CCS.Service.ResponseDTO.ComplianceScoreResponseDTO;
+import com.CCS.Service.Service.ComplianceScoreService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/scan-reports")
+@RequestMapping("/api/compliance-scores")
 @RequiredArgsConstructor
-public class ScanReportController {
+public class ComplianceScoreController {
 
     @Autowired
-    private ScanReportService scanReportService;
+    private ComplianceScoreService complianceScoreService;
 
 
     @GetMapping
     public ResponseEntity<
-            ApiResponse<List<ScanReportResponseDTO>>>
-    getAllReports() {
+            ApiResponse<List<ComplianceScoreResponseDTO>>>
+    getAllScores() {
+
+        List<ComplianceScoreResponseDTO> scores =
+                complianceScoreService.getAllScores();
 
         return ResponseEntity.ok(
                 new ApiResponse<>(
-                        "Scan reports fetched successfully",
-                        scanReportService.getAllReports(),
+                        "Compliance scores fetched successfully",
+                        scores,
                         true));
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<
-            ApiResponse<ScanReportResponseDTO>>
-    getReport(@PathVariable UUID id) {
+            ApiResponse<ComplianceScoreResponseDTO>>
+    getScore(@PathVariable UUID id) {
+
+        ComplianceScoreResponseDTO score =
+                complianceScoreService.getScore(id);
 
         return ResponseEntity.ok(
                 new ApiResponse<>(
-                        "Scan report fetched successfully",
-                        scanReportService.getReport(id),
+                        "Compliance score fetched successfully",
+                        score,
                         true));
     }
 
 
     @PostMapping("/new")
     public ResponseEntity<
-            ApiResponse<ScanReportResponseDTO>>
-    generateReport(
+            ApiResponse<ComplianceScoreResponseDTO>>
+    calculateScore(
             @Valid @RequestBody
-            ScanReportRequestDTO dto) {
+            ComplianceScoreRequestDTO dto) {
+
+        ComplianceScoreResponseDTO score =
+                complianceScoreService
+                        .calculateScore(dto);
 
         return new ResponseEntity<>(
                 new ApiResponse<>(
-                        "Scan report generated successfully",
-                        scanReportService.generateReport(dto),
+                        "Compliance score calculated successfully",
+                        score,
                         true),
                 HttpStatus.CREATED);
     }
@@ -75,13 +85,13 @@ public class ScanReportController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse<Object>>
-    deleteReport(@PathVariable UUID id) {
+    deleteScore(@PathVariable UUID id) {
 
-        scanReportService.deleteReport(id);
+        complianceScoreService.deleteScore(id);
 
         return ResponseEntity.ok(
                 new ApiResponse<>(
-                        "Scan report deleted successfully",
+                        "Compliance score deleted successfully",
                         null,
                         true));
     }

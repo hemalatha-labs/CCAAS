@@ -14,17 +14,15 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "scan_report")
+@Table(name = "compliance_score")
 @Data
-public class ScanReport {
+public class ComplianceScore {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID reportId;
+    private UUID scoreId;
 
-    private String reportName;
-
-    private LocalDateTime generatedAt;
+    private Double score;
 
     private Integer totalResources;
 
@@ -32,9 +30,7 @@ public class ScanReport {
 
     private Integer nonCompliantResources;
 
-    private Double complianceScore;
-
-    private Integer totalViolations;
+    private LocalDateTime calculatedAt;
 
     @OneToOne
     @JoinColumn(name = "scan_id")
