@@ -4,88 +4,93 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.TenantRequestDTO;
 import com.CCS.Service.ResponseDTO.TenantResponseDTO;
 import com.CCS.Service.Service.TenantService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/tenant")
+@RequestMapping("/api/tenants")
+@RequiredArgsConstructor
 public class TenantController {
 
     @Autowired
     private TenantService tenantService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<TenantResponseDTO>>> getAllTenants() {
 
-        List<TenantResponseDTO> tenants =
-                tenantService.getAllTenants();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<TenantResponseDTO>>>
+    getAllTenants() {
 
         return ResponseEntity.ok(
                 new ApiResponse<>(
                         "Tenants fetched successfully",
-                        tenants,
+                        tenantService.getAllTenants(),
                         true));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<TenantResponseDTO>> getTenantById(
-            @PathVariable UUID id) {
 
-        TenantResponseDTO tenant =
-                tenantService.getTenant(id);
+    // GET BY ID
+    @GetMapping("/{id}")
+    public ResponseEntity<
+            ApiResponse<TenantResponseDTO>>
+    getTenant(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
                 new ApiResponse<>(
                         "Tenant fetched successfully",
-                        tenant,
+                        tenantService.getTenant(id),
                         true));
     }
 
+
+    // CREATE
     @PostMapping("/new")
-    public ResponseEntity<ApiResponse<TenantResponseDTO>> createTenant(
-            @Valid @RequestBody com.CCS.Service.RequestDTO.TenantRequestDTO dto) {
+    public ResponseEntity<
+            ApiResponse<TenantResponseDTO>>
+    newTenant(
+            @Valid @RequestBody
+            TenantRequestDTO dto) {
 
-        TenantResponseDTO createdTenant =
-                tenantService.newTenant(dto);
-
-        return ResponseEntity.ok(
+        return new ResponseEntity<>(
                 new ApiResponse<>(
                         "Tenant created successfully",
-                        createdTenant,
-                        true));
+                        tenantService.newTenant(dto),
+                        true),
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<TenantResponseDTO>> updateTenant(
-            @PathVariable UUID id,
-            @Valid @RequestBody com.CCS.Service.RequestDTO.TenantRequestDTO dto) {
 
-        TenantResponseDTO updatedTenant =
-                tenantService.updateTenant(id, dto);
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<
+            ApiResponse<TenantResponseDTO>>
+    updateTenant(
+            @PathVariable UUID id,
+            @Valid @RequestBody
+            TenantRequestDTO dto) {
 
         return ResponseEntity.ok(
                 new ApiResponse<>(
                         "Tenant updated successfully",
-                        updatedTenant,
+                        tenantService.updateTenant(id, dto),
                         true));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteTenant(
-            @PathVariable UUID id) {
+
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteTenant(@PathVariable UUID id) {
 
         tenantService.deleteTenant(id);
 

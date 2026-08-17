@@ -8,22 +8,19 @@ import com.CCS.Service.Enumuration.SubscriptionPlan;
 import com.CCS.Service.Enumuration.TenantStatus;
 
 import lombok.Data;
+
 @Data
-
 public class TenantResponseDTO {
-	
 
-	    private UUID tenantId;
+    private UUID tenantId;
 
-	    private String tenantName;
+    private String tenantName;
 
-	    private IndustryType industry;
+    private IndustryType industry;
 
-	    private SubscriptionPlan subscriptionPlan;
+    private SubscriptionPlan subscriptionPlan;
 
-	    private TenantStatus status;
+    private TenantStatus status;
 
-	    private LocalDateTime createdAt;
-
-
+    private LocalDateTime createdAt;
 }

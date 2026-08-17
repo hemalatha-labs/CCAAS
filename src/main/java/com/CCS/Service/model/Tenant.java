@@ -14,25 +14,28 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import lombok.Data;
 
 @Entity
-@Table(name="Tenant")
+@Table(name = "tenant")
 @Data
 public class Tenant {
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID tenantId;
-	
-	private String tenantName;
-	
-	
-	@Enumerated(EnumType.STRING)
-	private IndustryType industry;
-	@Enumerated(EnumType.STRING)
-	private SubscriptionPlan subscriptionPlan;
-	@Enumerated(EnumType.STRING)
-	private TenantStatus status;
-	private LocalDateTime createdAT;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID tenantId;
+
+    private String tenantName;
+
+    @Enumerated(EnumType.STRING)
+    private IndustryType industry;
+
+    @Enumerated(EnumType.STRING)
+    private SubscriptionPlan subscriptionPlan;
+
+    @Enumerated(EnumType.STRING)
+    private TenantStatus status;
+
+    private LocalDateTime createdAt;
 }

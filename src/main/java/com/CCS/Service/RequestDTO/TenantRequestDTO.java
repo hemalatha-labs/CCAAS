@@ -6,6 +6,7 @@ import com.CCS.Service.Enumuration.TenantStatus;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.Data;
 
 @Data
@@ -20,6 +21,5 @@ public class TenantRequestDTO {
     @NotNull(message = "Subscription plan is required")
     private SubscriptionPlan subscriptionPlan;
 
-    @NotNull(message = "Status is required")
     private TenantStatus status;
 }
