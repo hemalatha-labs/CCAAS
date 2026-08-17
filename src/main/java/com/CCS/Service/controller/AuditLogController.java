@@ -1,84 +1,92 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.RequestDTO.AuditLogRequestDTO;
+import com.CCS.Service.ResponseDTO.AuditLogResponseDTO;
 import com.CCS.Service.Service.AuditLogService;
-import com.CCS.Service.model.AuditLog;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/auditlog")
+@RequestMapping("/api/audit-logs")
+@RequiredArgsConstructor
 public class AuditLogController {
 
     @Autowired
     private AuditLogService auditLogService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<AuditLog>>> getAllAuditLogs() {
 
-        List<AuditLog> auditLogs = auditLogService.getAllAuditLogs();
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<AuditLogResponseDTO>>>
+    getAllAuditLogs() {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Audit Logs fetched successfully",
-                        auditLogs, true));
+                new ApiResponse<>(
+                        "Audit logs fetched successfully",
+                        auditLogService
+                                .getAllAuditLogs(),
+                        true));
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<AuditLog>>> getAuditLogById(
-            @PathVariable UUID id) {
-
-        Optional<AuditLog> auditLog = auditLogService.getAuditLog(id);
-
-        return ResponseEntity.ok(
-                new ApiResponse<>("Audit Log fetched successfully",
-                        auditLog, true));
-    }
-
-    @PostMapping
-    public ResponseEntity<ApiResponse<AuditLog>> createAuditLog(
-            @RequestBody AuditLog auditLog) {
-
-        AuditLog createdAuditLog = auditLogService.newAuditLog(auditLog);
+    public ResponseEntity<
+            ApiResponse<AuditLogResponseDTO>>
+    getAuditLog(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Audit Log created successfully",
-                        createdAuditLog, true));
+                new ApiResponse<>(
+                        "Audit log fetched successfully",
+                        auditLogService
+                                .getAuditLog(id),
+                        true));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<AuditLog>> updateAuditLog(
-            @PathVariable UUID id,
-            @RequestBody AuditLog auditLog) {
 
-        AuditLog updatedAuditLog =
-                auditLogService.UpdateAuditLog(auditLog);
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<AuditLogResponseDTO>>
+    newAuditLog(
+            @Valid @RequestBody
+            AuditLogRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Audit Log updated successfully",
-                        updatedAuditLog, true));
+        return new ResponseEntity<>(
+                new ApiResponse<>(
+                        "Audit log created successfully",
+                        auditLogService
+                                .newAuditLog(dto),
+                        true),
+                HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteAuditLog(
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteAuditLog(
             @PathVariable UUID id) {
 
         auditLogService.deleteAuditLog(id);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("Audit Log deleted successfully",
-                        null, true));
+                new ApiResponse<>(
+                        "Audit log deleted successfully",
+                        null,
+                        true));
     }
 }

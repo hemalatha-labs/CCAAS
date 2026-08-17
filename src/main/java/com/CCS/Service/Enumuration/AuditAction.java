@@ -1,14 +1,13 @@
 package com.CCS.Service.Enumuration;
 
 public enum AuditAction {
-	CREATE,
-	UPDATE,
-	DELETE,
-	LOGIN,
-	LOGOUT,
-	SCAN,
-	EXPORT,
-	IMPORT,
-	VIEW,
-	APPROVE
+
+    CREATE,
+    UPDATE,
+    DELETE,
+    SCAN_STARTED,
+    SCAN_COMPLETED,
+    VIOLATION_DETECTED,
+    VIOLATION_RESOLVED,
+    LOGIN
 }
