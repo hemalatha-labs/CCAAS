@@ -1,13 +1,18 @@
 package com.CCS.Service.Repo;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import com.CCS.Service.model.Violation;
-@Repository
 
-public interface ViolationRepo extends JpaRepository<Violation,UUID>{
+public interface ViolationRepo
+        extends JpaRepository<Violation, UUID> {
 
+    List<Violation> findByComplianceScanScanId(
+            UUID scanId);
+
+    List<Violation> findByStatus(
+            com.CCS.Service.Enumuration.ViolationStatus status);
 }

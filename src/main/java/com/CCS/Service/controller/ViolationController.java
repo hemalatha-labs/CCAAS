@@ -1,10 +1,10 @@
 package com.CCS.Service.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,61 +16,148 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CCS.Service.ApiResponse.ApiResponse;
+import com.CCS.Service.Enumuration.ViolationStatus;
+import com.CCS.Service.RequestDTO.ViolationRequestDTO;
+import com.CCS.Service.ResponseDTO.ViolationResponseDTO;
 import com.CCS.Service.Service.ViolationService;
-import com.CCS.Service.model.Violation;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/violation")
+@RequestMapping("/api/violations")
+@RequiredArgsConstructor
 public class ViolationController {
 
     @Autowired
     private ViolationService violationService;
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<Violation>>> getAllViolations() {
 
-        List<Violation> violations = violationService.getAllViolations();
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<
+            ApiResponse<List<ViolationResponseDTO>>>
+    getAllViolations() {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Violations fetched successfully", violations, true));
+        List<ViolationResponseDTO> violations =
+                violationService
+                        .getAllViolations();
+
+        ApiResponse<List<ViolationResponseDTO>> response =
+                new ApiResponse<>(
+                        "Violations fetched successfully",
+                        violations,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Optional<Violation>>> getViolationById(@PathVariable UUID id) {
+    public ResponseEntity<
+            ApiResponse<ViolationResponseDTO>>
+    getViolation(
+            @PathVariable UUID id) {
 
-        Optional<Violation> violation = violationService.getViolation(id);
+        ViolationResponseDTO violation =
+                violationService
+                        .getViolation(id);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Violation fetched successfully", violation, true));
+        ApiResponse<ViolationResponseDTO> response =
+                new ApiResponse<>(
+                        "Violation fetched successfully",
+                        violation,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<Violation>> createViolation(
-            @RequestBody Violation violation) {
 
-        Violation createdViolation = violationService.newViolation(violation);
+    // GET BY SCAN
+    @GetMapping("/scan/{scanId}")
+    public ResponseEntity<
+            ApiResponse<List<ViolationResponseDTO>>>
+    getViolationsByScan(
+            @PathVariable UUID scanId) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Violation created successfully", createdViolation, true));
+        List<ViolationResponseDTO> violations =
+                violationService
+                        .getViolationsByScan(
+                                scanId);
+
+        ApiResponse<List<ViolationResponseDTO>> response =
+                new ApiResponse<>(
+                        "Violations fetched successfully",
+                        violations,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Violation>> updateViolation(
-            @PathVariable Long id,
-            @RequestBody Violation violation) {
 
-        Violation updatedViolation = violationService.UpdateViolation(violation);
+    // CREATE
+    @PostMapping("/new")
+    public ResponseEntity<
+            ApiResponse<ViolationResponseDTO>>
+    newViolation(
+            @Valid @RequestBody
+            ViolationRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Violation updated successfully", updatedViolation, true));
+        ViolationResponseDTO violation =
+                violationService
+                        .newViolation(dto);
+
+        ApiResponse<ViolationResponseDTO> response =
+                new ApiResponse<>(
+                        "Violation created successfully",
+                        violation,
+                        true);
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteViolation(@PathVariable UUID id) {
 
-        violationService.deleteViolation(id);
+    // UPDATE STATUS
+    @PutMapping("/{id}/status")
+    public ResponseEntity<
+            ApiResponse<ViolationResponseDTO>>
+    updateViolationStatus(
+            @PathVariable UUID id,
+            @RequestBody ViolationStatus status) {
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("Violation deleted successfully", null, true));
+        ViolationResponseDTO violation =
+                violationService
+                        .updateViolationStatus(
+                                id, status);
+
+        ApiResponse<ViolationResponseDTO> response =
+                new ApiResponse<>(
+                        "Violation status updated successfully",
+                        violation,
+                        true);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    // DELETE
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<Object>>
+    deleteViolation(
+            @PathVariable UUID id) {
+
+        violationService
+                .deleteViolation(id);
+
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        "Violation deleted successfully",
+                        null,
+                        true);
+
+        return ResponseEntity.ok(response);
     }
 }
